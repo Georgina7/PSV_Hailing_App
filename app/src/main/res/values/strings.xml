@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">PSV Hailing App</string>
+    <string name="next">Next</string>
+    <string name="continue_with_email">Continue with Email</string>
+    <string name="enter_your_number">Enter your number</string>
+    <string name="_712345678">712345678</string>
+    <string name="the_code_was_sent_to">The code was sent to</string>
+    <string name="enter_verification_code">Enter Verification Code</string>
+    <string name="verify">Verify</string>
+    <string name="_254712346789">+254712346789</string>
+    <string name="code">Code</string>
 </resources>
