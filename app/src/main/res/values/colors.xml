@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="whitespace">#FFFFFFFF</color>
+    <color name="info_text">#FF000000</color>
+    <color name="common_color_accent">#FF5722</color>
+    <color name="psv_color_accent">#40E0D0</color>
+    <color name="pwd_color_accent">#FF5722</color>
 </resources>
