@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "917593455964",
+    "project_id": "psvhailingapp",
+    "storage_bucket": "psvhailingapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917593455964:android:a28bf2e09611d62af11599",
+        "android_client_info": {
+          "package_name": "com.georgina.psvhailingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "917593455964-b2mn8bfp2u9e6bchnmphuqkqtu7aq0cp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.georgina.psvhailingapp",
+            "certificate_hash": "a4cd8f993f4348bb74d5ef8705451b48a0c4fe24"
+          }
+        },
+        {
+          "client_id": "917593455964-1p2degt72t1ljnuadg1f6cakgie0pkp3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtQlIpq2sIj07DR3BnLpYcaYPfn0FdRn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917593455964-1p2degt72t1ljnuadg1f6cakgie0pkp3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
