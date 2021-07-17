@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
     public void Next(View view) {
         String pNumber = mPhoneNumber.getText().toString();
         String ccp = "+254";
-        PhoneNumber = ccp + mPhoneNumber.getText().toString();
+        PhoneNumber = ccp + pNumber;
         if(pNumber.isEmpty()){
             mLoginMessage.setText(R.string.blank_number);
             mLoginMessage.setVisibility(View.VISIBLE);
@@ -213,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendUserToMain() {
-        Intent mainIntent = new Intent(LoginActivity.this,ProfileActivity.class);
+        Intent mainIntent = new Intent(LoginActivity.this,PassengerMapActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
