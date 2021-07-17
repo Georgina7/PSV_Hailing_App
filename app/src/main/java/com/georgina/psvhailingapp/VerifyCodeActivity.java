@@ -62,6 +62,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast toast = Toast.makeText(getApplicationContext(),"This has worked",Toast.LENGTH_SHORT);
                             toast.show();
+                            sendUserToMain();
 
                         } else {
 
@@ -82,7 +83,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
     }
 
     private void sendUserToMain() {
-        Intent mainIntent = new Intent(VerifyCodeActivity.this,LoginActivity.class);
+        Intent mainIntent = new Intent(VerifyCodeActivity.this,PassengerMapActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
