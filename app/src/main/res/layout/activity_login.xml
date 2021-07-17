@@ -21,6 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
+
     <com.hbb20.CountryCodePicker
         android:id="@+id/countryCodePicker"
         android:layout_width="@dimen/_88ssp"
@@ -29,11 +30,10 @@
         android:gravity="center"
         android:layout_marginTop="@dimen/_24sdp"
         android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_15sdp"
         app:ccp_autoDetectCountry="true"
-        app:cpp_showNameCode="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:layout_marginStart="@dimen/_15sdp" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"/>
 
     <EditText
         android:id="@+id/p_number"
@@ -51,7 +51,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/countryCodePicker"
         app:layout_constraintTop_toTopOf="@+id/countryCodePicker"
-        android:autofillHints="@string/_712345678"
         android:layout_marginEnd="@dimen/_15sdp" />
 
     <Button
@@ -71,6 +70,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/messageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:text="@string/textview"
+        android:textColor="@color/purple_500"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/p_number" />
     <Button
         android:id="@+id/next"
         android:layout_width="match_parent"
@@ -80,6 +91,7 @@
         android:paddingTop="@dimen/_8ssp"
         android:paddingBottom="@dimen/_8ssp"
         android:text="@string/next"
+        android:onClick="Next"
         android:textSize="@dimen/_16ssp"
         android:layout_marginLeft="@dimen/_15sdp"
         android:layout_marginRight="@dimen/_15sdp"
@@ -88,5 +100,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
