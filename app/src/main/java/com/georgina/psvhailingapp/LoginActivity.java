@@ -169,58 +169,57 @@ public class LoginActivity extends AppCompatActivity {
                             .setPhoneNumber(PhoneNumber)       // Phone number to verify
                             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
                             .setActivity(LoginActivity.this)                 // Activity (for callback binding)
-                            .setCallbacks(mCallbacks)// OnVerificationStateChangedCallbacks
+                            .setCallbacks(mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                                @Override
+                                public void onVerificationCompleted(@NotNull PhoneAuthCredential phoneAuthCredential) {
+                                    VerifyCodeActivity verify = new VerifyCodeActivity();
+                                    verify.signInWithPhoneAuthCredential(phoneAuthCredential);
+                                }
+
+                                @Override
+                                public void onVerificationFailed(@NotNull FirebaseException e) {
+                                    mLoginMessage.setText(R.string.verification_failed);
+                                    mLoginMessage.setVisibility(View.VISIBLE);
+                                    mLoginMessage.setVisibility(View.INVISIBLE);
+                                }
+
+                                @Override
+                                public void onCodeSent(@NotNull String s, PhoneAuthProvider.@NotNull ForceResendingToken forceResendingToken) {
+                                    super.onCodeSent(s, forceResendingToken);
+                                    new android.os.Handler().postDelayed(
+                                            () -> {
+                                                Intent codeIntent = new Intent(LoginActivity.this, VerifyCodeActivity.class);
+                                                codeIntent.putExtra("AuthCredentials", s);
+                                                codeIntent.putExtra("phoneNumber",PhoneNumber);
+                                                startActivity(codeIntent);
+                                            },
+                                            10000
+                                    );
+                                }
+                            })// OnVerificationStateChangedCallbacks
                             .build();
             PhoneAuthProvider.verifyPhoneNumber(options);
 
         }
 
-        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(@NotNull PhoneAuthCredential phoneAuthCredential) {
-                VerifyCodeActivity verify = new VerifyCodeActivity();
-                verify.signInWithPhoneAuthCredential(phoneAuthCredential);
-            }
-
-            @Override
-            public void onVerificationFailed(@NotNull FirebaseException e) {
-                mLoginMessage.setText(R.string.verification_failed);
-                mLoginMessage.setVisibility(View.VISIBLE);
-                mLoginMessage.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onCodeSent(@NotNull String s, PhoneAuthProvider.@NotNull ForceResendingToken forceResendingToken) {
-                super.onCodeSent(s, forceResendingToken);
-                new android.os.Handler().postDelayed(
-                        () -> {
-                            Intent codeIntent = new Intent(LoginActivity.this, VerifyCodeActivity.class);
-                            codeIntent.putExtra("AuthCredentials", s);
-                            codeIntent.putExtra("phoneNumber",PhoneNumber);
-                            startActivity(codeIntent);
-                        },
-                        10000
-                );
-            }
-        };
     }
-//
-//    protected void onStart(){
-//        super.onStart();
-////        if(mCurrentUser != null){
-////            sendUserToMain();
-////        }
-//
-//    }
-//
-//    private void sendUserToMain() {
-//        Intent mainIntent = new Intent(LoginActivity.this,MainActivity.class);
-//        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        startActivity(mainIntent);
-//        finish();
-//        mAuth.signOut();
-//    }
+
+    protected void onStart(){
+        super.onStart();
+        if(mCurrentUser != null){
+            sendUserToMain();
+        }
+
+    }
+
+    private void sendUserToMain() {
+        Intent mainIntent = new Intent(LoginActivity.this,ProfileActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+        mAuth.signOut();
+    }
 
 
 }
