@@ -53,23 +53,35 @@
         app:layout_constraintTop_toTopOf="@+id/countryCodePicker"
         android:layout_marginEnd="@dimen/_15sdp" />
 
-    <Button
-        android:id="@+id/continue_email"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
-        android:textSize="@dimen/_14ssp"
-        android:fontFamily="@font/open_sans_semibold"
-        android:text="@string/continue_with_email"
-        android:textAllCaps="false"
-        android:textColor="@color/pwd_color_accent"
         android:layout_marginLeft="@dimen/_15sdp"
         android:layout_marginRight="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_44sdp"
         app:layout_constraintBottom_toTopOf="@+id/next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
+
+<!--    <Button-->
+<!--        android:id="@+id/continue_email"-->
+<!--        style="@style/Widget.MaterialComponents.Button.TextButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="44dp"-->
+<!--        android:textSize="@dimen/_14ssp"-->
+<!--        android:fontFamily="@font/open_sans_semibold"-->
+<!--        android:text="@string/continue_with_email"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textColor="@color/pwd_color_accent"-->
+<!--        android:layout_marginLeft="@dimen/_15sdp"-->
+<!--        android:layout_marginRight="@dimen/_15sdp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/next"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
     <TextView
         android:id="@+id/messageText"
