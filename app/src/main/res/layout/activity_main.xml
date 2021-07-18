@@ -108,6 +108,7 @@
         android:text="Verify with Phone"
         android:fontFamily="@font/open_sans_semibold"
         android:textSize="@dimen/_12ssp"
+        android:onClick="verifyWithPhone"
         app:layout_constraintTop_toBottomOf="@id/conditions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
