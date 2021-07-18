@@ -10,10 +10,13 @@
     <string name="_254712346789">+254712346789</string>
     <string name="code">Code</string>
     <string name="blank_number">Please fill your number</string>
-    <string name="verification_failed">Verification Failed,Try Again</string>
+    <string name="verification_failed">Verification Failed, Try Again</string>
     <string name="textview">TextView</string>
     <string name="error_verifying">There was an error verifying</string>
     <string name="item">item</string>
     <string name="logout">Logout</string>
     <string name="sign_up_as_driver">Sign Up As Driver</string>
+    <string name="fill_all_blanks">Please fill in all the blanks</string>
+    <string name="full_name">Full Name</string>
+    <string name="view_profile">View Profile</string>
 </resources>
