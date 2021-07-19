@@ -106,12 +106,12 @@ public class MainActivity extends AppCompatActivity {
                                 public void onVerificationCompleted(@NotNull PhoneAuthCredential phoneAuthCredential) {
                                     VerifyCodeActivity verify = new VerifyCodeActivity();
                                     verify.signInWithPhoneAuthCredential(phoneAuthCredential);
-                                    storeUserData();
+
                                 }
 
                                 @Override
                                 public void onVerificationFailed(@NotNull FirebaseException e) {
-                                    Toast errorToast = Toast.makeText(getApplicationContext(), R.string.verification_failed,Toast.LENGTH_SHORT);
+                                    Toast errorToast = Toast.makeText(getApplicationContext(), e.getMessage(),Toast.LENGTH_LONG);
                                     errorToast.show();
                                 }
 
@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
                                                 Intent codeIntent = new Intent(getApplicationContext(), VerifyCodeActivity.class);
                                                 codeIntent.putExtra("AuthCredentials", s);
                                                 codeIntent.putExtra("phoneNumber",PhoneNumber);
+                                                codeIntent.putExtra("fullName", fullName);
+                                                codeIntent.putExtra("email", email);
                                                 startActivity(codeIntent);
                                             },
                                             10000
@@ -134,15 +136,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-    public void storeUserData(){
-        String user_id = mCurrentUser.getUid();
-        String pNumber = mPhoneNumber.getText().toString();
-        String email = mEmail.getText().toString();
-        String fullName = mFullName.getText().toString();
-        String ccp = "+254";
-        String PhoneNumber = ccp + pNumber;
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        User user = new User(fullName, email, PhoneNumber);
-        databaseReference = firebaseDatabase.getReference().child("Users").child("Passengers").child(user_id).setValue(user);
-    }
+
 }

@@ -18,10 +18,13 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class VerifyCodeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
+    private FirebaseDatabase firebaseDatabase;
+    private Task<Void> databaseReference;
     private String mAuthVerificationId;
     private TextView mMessageText;
     private EditText mCode;
@@ -59,9 +62,15 @@ public class VerifyCodeActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast toast = Toast.makeText(getApplicationContext(),"This has worked",Toast.LENGTH_SHORT);
-                            toast.show();
+                            mCurrentUser = task.getResult().getUser();
+                            String user_id = mCurrentUser.getUid();
+                            storeUserData(user_id);
+                            Toast.makeText(getApplicationContext(), user_id, Toast.LENGTH_LONG).show();
+//                            Toast toast = Toast.makeText(getApplicationContext(),"This has worked",Toast.LENGTH_SHORT);
+//                            toast.show();
+                            //storeUserData();
                             sendUserToMain();
+
 
                         } else {
 
@@ -87,6 +96,21 @@ public class VerifyCodeActivity extends AppCompatActivity {
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
+    }
+
+    public void storeUserData(String user_id){
+        Toast.makeText(getApplicationContext(), user_id, Toast.LENGTH_SHORT).show();
+        String email = getIntent().getStringExtra("email");
+        String fullName = getIntent().getStringExtra("fullName");
+        String phoneNumber = getIntent().getStringExtra("phoneNumber");
+        if(email == "" || fullName == ""){
+            Toast.makeText(getApplicationContext(), "This is just the login activity", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getApplicationContext(), "This is just the signup activity", Toast.LENGTH_SHORT).show();
+        }
+//        firebaseDatabase = FirebaseDatabase.getInstance();
+//        User user = new User(fullName, email, phoneNumber);
+//        databaseReference = firebaseDatabase.getReference().child("Users").child(user_id).setValue(user);
     }
 
 

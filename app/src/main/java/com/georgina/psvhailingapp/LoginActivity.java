@@ -91,8 +91,6 @@ public class LoginActivity extends AppCompatActivity {
         mPhoneNumber = findViewById(R.id.p_number);
         mLoginMessage = findViewById(R.id.messageText);
 
-
-
     }
 
     @Override
