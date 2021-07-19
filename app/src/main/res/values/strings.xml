@@ -19,4 +19,6 @@
     <string name="fill_all_blanks">Please fill in all the blanks</string>
     <string name="full_name">Full Name</string>
     <string name="view_profile">View Profile</string>
+    <string name="already_have_an_account_click_here">Already have an account? <u>Login</u></string>
+    <string name="or">or</string>
 </resources>

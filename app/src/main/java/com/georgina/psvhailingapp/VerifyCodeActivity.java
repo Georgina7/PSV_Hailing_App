@@ -99,7 +99,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
     }
 
     public void storeUserData(String user_id){
-        Toast.makeText(getApplicationContext(), user_id, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), user_id, Toast.LENGTH_SHORT).show();
         String email = getIntent().getStringExtra("email");
         String fullName = getIntent().getStringExtra("fullName");
         String phoneNumber = getIntent().getStringExtra("phoneNumber");

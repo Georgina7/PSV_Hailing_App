@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                                            //When task is successful
                                            //Redirect to profile activity
                                            startActivity(new Intent(LoginActivity.this,
-                                                   ProfileActivity.class)
+                                                   PassengerMapActivity.class)
                                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
                                            displayToast("Firebase authentication successful");
