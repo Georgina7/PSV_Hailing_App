@@ -1,0 +1,119 @@
+package com.georgina.psvhailingapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+public class DriverDetailsActivity extends AppCompatActivity {
+    private TextInputLayout mRoutes;
+    private TextInputLayout mSeatsAvailable;
+    private TextInputLayout mLicenceNo;
+    private TextInputLayout mMatatuNoPlate;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mCurrentUser;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_driver_details);
+        mRoutes = findViewById(R.id.routes);
+        mSeatsAvailable = findViewById(R.id.number_seats_available);
+        mMatatuNoPlate = findViewById(R.id.text_number_plate);
+        mLicenceNo = findViewById(R.id.text_licence_no);
+        mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
+    }
+    private boolean validateSeatsAvailable(){
+        String seatsAvailable = mSeatsAvailable.getEditText().getText().toString().trim();
+        if(seatsAvailable.isEmpty()){
+            mSeatsAvailable.setError("This field is empty");
+            return false;
+        }
+        else {
+            mSeatsAvailable.setError(null);
+            return true;
+        }
+    }
+    private boolean validateRoutes(){
+        String routes = mRoutes.getEditText().getText().toString().trim();
+        if(routes.isEmpty()){
+            mRoutes.setError("This field is empty");
+            return false;
+        }
+        else {
+            mRoutes.setError(null);
+            return true;
+        }
+
+    }
+    private boolean validateNumberPlate(){
+        String matatuNoPlate = mMatatuNoPlate.getEditText().getText().toString().trim();
+        if(matatuNoPlate.isEmpty()){
+            mMatatuNoPlate.setError("This field is empty");
+            return false;
+        }
+        else {
+            mMatatuNoPlate.setError(null);
+            return true;
+        }
+    }
+    private boolean validateLicenceNumber(){
+        String licenceNo = mLicenceNo.getEditText().getText().toString().trim();
+        if(licenceNo.isEmpty()){
+            mLicenceNo.setError("This field is empty");
+            return false;
+        }
+        else if(licenceNo.length() > 10){
+            mLicenceNo.setError("This is invalid!");
+            return false;
+        }
+        else if(licenceNo.length() < 10){
+            mLicenceNo.setError("This is invalid!");
+            return false;
+        }
+        else {
+            mLicenceNo.setError(null);
+            return true;
+        }
+    }
+
+    public void Update(View view) {
+        if (!validateLicenceNumber() | !validateNumberPlate() | !validateRoutes() | !validateSeatsAvailable()) {
+            return;
+        }
+
+
+        String user_id = mCurrentUser.getUid();
+
+        updateDriverDetails(user_id);
+        sendToDriverMapActivity();
+
+
+    }
+    private void updateDriverDetails(String user_id){
+
+        String licence_number = mLicenceNo.getEditText().getText().toString();
+        String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
+        String routes = mRoutes.getEditText().getText().toString();
+        String seats_available = mSeatsAvailable.getEditText().getText().toString();
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available);
+        databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
+        databaseReference.setValue(driverDetails);
+    }
+    private void sendToDriverMapActivity(){
+        Intent intent = new Intent(DriverDetailsActivity.this,DriverMapActivity.class);
+        startActivity(intent);
+        finish();
+    }
+}

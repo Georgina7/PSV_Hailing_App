@@ -21,4 +21,11 @@
     <string name="view_profile">View Profile</string>
     <string name="already_have_an_account_click_here">Already have an account? <u>Login</u></string>
     <string name="or">or</string>
+    <string name="route_example">eg. Mlolongo - CBD</string>
+    <string name="driver_details">Driver Details</string>
+    <string name="licence_no">Licence No.</string>
+    <string name="matatu_no_plate">Matatu No. Plate</string>
+    <string name="routes">Routes</string>
+    <string name="seats_available">Seats Available</string>
+    <string name="update">Update</string>
 </resources>
