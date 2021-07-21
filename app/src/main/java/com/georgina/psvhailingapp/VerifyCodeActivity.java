@@ -18,13 +18,14 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class VerifyCodeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase firebaseDatabase;
-    private Task<Void> databaseReference;
+    private DatabaseReference databaseReference;
     private String mAuthVerificationId;
     private TextView mMessageText;
     private EditText mCode;
@@ -108,9 +109,10 @@ public class VerifyCodeActivity extends AppCompatActivity {
         }else{
             Toast.makeText(getApplicationContext(), "This is just the signup activity", Toast.LENGTH_SHORT).show();
         }
-//        firebaseDatabase = FirebaseDatabase.getInstance();
-//        User user = new User(fullName, email, phoneNumber);
-//        databaseReference = firebaseDatabase.getReference().child("Users").child(user_id).setValue(user);
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        User user = new User(fullName, email, phoneNumber);
+        databaseReference = firebaseDatabase.getReference("Users").child(user_id);
+        databaseReference.setValue(user);
     }
 
 
