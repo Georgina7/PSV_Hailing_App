@@ -12,4 +12,5 @@
     <color name="common_color_accent">#FF5722</color>
     <color name="psv_color_accent">#40E0D0</color>
     <color name="pwd_color_accent">#FF5722</color>
+    <color name="pwd_color_accent_variant">#FF5332</color>
 </resources>

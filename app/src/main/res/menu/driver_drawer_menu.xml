@@ -11,9 +11,9 @@
             android:title="@string/item"
             android:checked="true" />
         <item
-            android:id="@+id/item2"
+            android:id="@+id/driver_details"
             android:icon="@drawable/ic_email"
-            android:title="@string/item" />
+            android:title="@string/driver_details"/>
         <item
             android:id="@+id/item3"
             android:icon="@drawable/ic_email"

@@ -33,9 +33,13 @@ public class DriverDetailsActivity extends AppCompatActivity {
         mCurrentUser = mAuth.getCurrentUser();
     }
     private boolean validateSeatsAvailable(){
-        String seatsAvailable = mSeatsAvailable.getEditText().getText().toString().trim();
-        if(seatsAvailable.isEmpty()){
-            mSeatsAvailable.setError("This field is empty");
+        int seatsAvailable = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString().trim());
+        if(seatsAvailable == 0){
+            mSeatsAvailable.setError(getString(R.string.empty_field));
+            return false;
+        }
+        else if(seatsAvailable < 0){
+            mSeatsAvailable.setError("Seats cannot be less than 0");
             return false;
         }
         else {
@@ -46,7 +50,7 @@ public class DriverDetailsActivity extends AppCompatActivity {
     private boolean validateRoutes(){
         String routes = mRoutes.getEditText().getText().toString().trim();
         if(routes.isEmpty()){
-            mRoutes.setError("This field is empty");
+            mRoutes.setError(getString(R.string.empty_field));
             return false;
         }
         else {
@@ -58,7 +62,11 @@ public class DriverDetailsActivity extends AppCompatActivity {
     private boolean validateNumberPlate(){
         String matatuNoPlate = mMatatuNoPlate.getEditText().getText().toString().trim();
         if(matatuNoPlate.isEmpty()){
-            mMatatuNoPlate.setError("This field is empty");
+            mMatatuNoPlate.setError(getString(R.string.empty_field));
+            return false;
+        }
+        else if(matatuNoPlate.length() != 8){
+            mMatatuNoPlate.setError(getString(R.string.invalid_field));
             return false;
         }
         else {
@@ -69,15 +77,11 @@ public class DriverDetailsActivity extends AppCompatActivity {
     private boolean validateLicenceNumber(){
         String licenceNo = mLicenceNo.getEditText().getText().toString().trim();
         if(licenceNo.isEmpty()){
-            mLicenceNo.setError("This field is empty");
+            mLicenceNo.setError(getString(R.string.empty_field));
             return false;
         }
-        else if(licenceNo.length() > 10){
-            mLicenceNo.setError("This is invalid!");
-            return false;
-        }
-        else if(licenceNo.length() < 10){
-            mLicenceNo.setError("This is invalid!");
+        else if(licenceNo.length() != 10){
+            mLicenceNo.setError(getString(R.string.invalid_field));
             return false;
         }
         else {
@@ -104,7 +108,7 @@ public class DriverDetailsActivity extends AppCompatActivity {
         String licence_number = mLicenceNo.getEditText().getText().toString();
         String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
         String routes = mRoutes.getEditText().getText().toString();
-        String seats_available = mSeatsAvailable.getEditText().getText().toString();
+        Integer seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available);

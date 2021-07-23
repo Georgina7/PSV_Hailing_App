@@ -35,8 +35,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:id="@+id/nav_view"
+        android:theme="@style/Theme.DriverDetails"
         app:headerLayout="@layout/navigation_header_driver"
-        app:menu="@menu/drawer_menu">
+        app:menu="@menu/driver_drawer_menu">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

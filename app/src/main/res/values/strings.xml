@@ -28,4 +28,7 @@
     <string name="routes">Routes</string>
     <string name="seats_available">Seats Available</string>
     <string name="update">Update</string>
+    <string name="confirm">Confirm</string>
+    <string name="empty_field">This field is empty</string>
+    <string name="invalid_field">This is invalid!</string>
 </resources>

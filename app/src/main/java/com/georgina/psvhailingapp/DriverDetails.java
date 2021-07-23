@@ -1,11 +1,12 @@
 package com.georgina.psvhailingapp;
 
 public class DriverDetails {
-    public String licenceNo,matatuPlate,routes,seats;
+    public String licenceNo,matatuPlate,routes;
+    public int seats;
 
     public DriverDetails(){ }
 
-    public DriverDetails(String licenceNo, String matatuPlate, String routes, String seats) {
+    public DriverDetails(String licenceNo, String matatuPlate, String routes, int seats) {
         this.licenceNo = licenceNo;
         this.matatuPlate = matatuPlate;
         this.routes = routes;
@@ -36,11 +37,11 @@ public class DriverDetails {
         this.routes = routes;
     }
 
-    public String getSeats() {
+    public int getSeats() {
         return seats;
     }
 
-    public void setSeats(String seats) {
+    public void setSeats(int seats) {
         this.seats = seats;
     }
 }
