@@ -7,6 +7,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,13 +17,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.internal.NavigationMenuItemView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
-public class DriverMapActivity extends AppCompatActivity {
+public class DriverMapActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawer;
     private FirebaseAuth mAuth;
@@ -41,6 +43,7 @@ public class DriverMapActivity extends AppCompatActivity {
         mDrawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         View header = navigationView.getHeaderView(0);
+        navigationView.setNavigationItemSelectedListener(this);
         profileFullName = header.findViewById(R.id.profile_fullname);
         if(mCurrentUser != null){
             //Toast.makeText(getApplicationContext(), mCurrentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
@@ -49,6 +52,17 @@ public class DriverMapActivity extends AppCompatActivity {
         //Initialize sign in client
         googleSignInClient = GoogleSignIn.getClient(DriverMapActivity.this,
                 GoogleSignInOptions.DEFAULT_SIGN_IN);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.driver_details:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new DriverDetailsFragment()).commit();
+                break;
+        }
+        mDrawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     public void openDrawer(View view) {

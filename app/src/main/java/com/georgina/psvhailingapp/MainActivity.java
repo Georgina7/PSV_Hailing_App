@@ -27,7 +27,11 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
-    private Task<Void> databaseReference;
+    private DatabaseReference databaseReference;
     private FirebaseDatabase firebaseDatabase;
     private SignInButton btnSignIn;
     private GoogleSignInClient mGoogleSignInClient;
@@ -95,8 +99,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         if(mCurrentUser != null){
-            sendUserToMain();
+            checkIfUserIsDriver();
         }
+
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
 //        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -108,6 +113,34 @@ public class MainActivity extends AppCompatActivity {
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
+    }
+    private void sendDriverToMain(){
+        Intent mainIntent = new Intent(MainActivity.this,DriverMapActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+    }
+    private void checkIfUserIsDriver(){
+
+        String user_id = mCurrentUser.getUid();
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users");
+        DatabaseReference driver_idRef = database.child("Driver").child(user_id);
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    sendDriverToMain();
+                }
+                else{
+                    sendUserToMain();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        driver_idRef.addListenerForSingleValueEvent(eventListener);
     }
 
 

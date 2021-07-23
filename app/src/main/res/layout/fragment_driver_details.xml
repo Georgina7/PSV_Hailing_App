@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/_30sdp"
+    android:orientation="vertical"
+    android:theme="@style/Theme.DriverDetails"
+    tools:context=".DriverDetailsFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:focusedByDefault="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:fontFamily="@font/open_sans_bold"
+            android:padding="@dimen/_12sdp"
+            android:text="@string/driver_details"
+            android:textSize="@dimen/_20ssp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_licence_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            app:counterEnabled="true"
+            app:counterMaxLength="10"
+            app:counterTextColor="@color/psv_color_accent"
+            app:errorEnabled="true"
+            app:startIconDrawable="@drawable/ic_card"
+            app:startIconTint="@color/psv_color_accent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="@string/licence_no"
+                android:enabled="false"
+                android:paddingTop="@dimen/_20sdp"
+                android:textSize="@dimen/_12ssp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_number_plate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            app:errorEnabled="true"
+            app:startIconDrawable="@drawable/ic_bus"
+            app:startIconTint="@color/psv_color_accent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="@string/matatu_no_plate"
+                android:paddingTop="@dimen/_20sdp"
+                android:textSize="@dimen/_12ssp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/routes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            app:errorEnabled="true"
+            app:helperText="@string/route_example"
+            app:startIconDrawable="@drawable/ic_route"
+            app:startIconTint="@color/psv_color_accent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="@string/routes"
+                android:paddingTop="@dimen/_20sdp"
+                android:textSize="@dimen/_12ssp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/number_seats_available"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            app:errorEnabled="true"
+            app:startIconDrawable="@drawable/ic_seat"
+            app:startIconTint="@color/psv_color_accent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:hint="@string/seats_available"
+                android:inputType="number"
+                android:paddingTop="@dimen/_20sdp"
+                android:textSize="@dimen/_12ssp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btn_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:height="@dimen/_48sdp"
+            android:backgroundTint="@color/psv_color_accent"
+            android:text="@string/update"/>
+
+
+    </LinearLayout>
+</FrameLayout>
