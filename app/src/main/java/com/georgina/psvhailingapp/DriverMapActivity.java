@@ -52,11 +52,18 @@ public class DriverMapActivity extends AppCompatActivity implements NavigationVi
         //Initialize sign in client
         googleSignInClient = GoogleSignIn.getClient(DriverMapActivity.this,
                 GoogleSignInOptions.DEFAULT_SIGN_IN);
+        if(savedInstanceState == null){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new DriverMapsFragment()).commit();
+            navigationView.setCheckedItem(R.id.map);
+        }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
         switch (item.getItemId()){
+            case R.id.map:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new DriverMapsFragment()).commit();
+                break;
             case R.id.driver_details:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new DriverDetailsFragment()).commit();
                 break;

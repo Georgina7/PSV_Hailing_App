@@ -28,7 +28,9 @@
     <string name="routes">Routes</string>
     <string name="seats_available">Seats Available</string>
     <string name="update">Update</string>
+    <string name="maps_api_key">AIzaSyAlUP4hytIAMtzBMfWQL0Eb8QwytcBWGZk</string>
     <string name="confirm">Confirm</string>
     <string name="empty_field">This field is empty</string>
     <string name="invalid_field">This is invalid!</string>
+    <string name="map">Map</string>
 </resources>
