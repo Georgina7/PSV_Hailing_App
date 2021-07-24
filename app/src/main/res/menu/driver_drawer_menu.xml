@@ -6,9 +6,9 @@
         android:id="@+id/group1"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/item1"
+            android:id="@+id/map"
             android:icon="@drawable/ic_email"
-            android:title="@string/item"
+            android:title="@string/map"
             android:checked="true" />
         <item
             android:id="@+id/driver_details"
