@@ -33,4 +33,10 @@
     <string name="empty_field">This field is empty</string>
     <string name="invalid_field">This is invalid!</string>
     <string name="map">Map</string>
+    <string name="available_routes">Available Routes</string>
+    <string name="madaraka">Madaraka</string>
+    <string name="georgina_nyokabi">Georgina Nyokabi</string>
+    <string name="_25471234567">+25471234567</string>
+    <string name="cbd">CBD</string>
+    <string name="kbc_778c">KBC 778C</string>
 </resources>
