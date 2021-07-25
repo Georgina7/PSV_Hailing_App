@@ -58,6 +58,7 @@
             android:paddingTop="@dimen/_20sdp"
             android:hint="@string/matatu_no_plate"/>
     </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/routes"
         android:layout_width="match_parent"

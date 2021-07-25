@@ -36,4 +36,7 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/pwd_color_accent</item>
     </style>
+    <style name="Theme.PWDDetails" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/pwd_color_accent</item>
+    </style>
 </resources>

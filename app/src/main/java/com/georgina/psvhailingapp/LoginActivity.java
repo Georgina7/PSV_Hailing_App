@@ -49,8 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
 
-    private SignInButton btnSignIn;
-    GoogleSignInClient googleSignInClient;
+//    private SignInButton btnSignIn;
+//    GoogleSignInClient googleSignInClient;
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //Assign Variable
-        btnSignIn = findViewById(R.id.sign_in_button);
+       // btnSignIn = findViewById(R.id.sign_in_button);
 
         //Initialize sign in options
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(
@@ -69,16 +69,16 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         //Initialize sign in client
-        googleSignInClient = GoogleSignIn.getClient(LoginActivity.this, googleSignInOptions);
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Initialize sign in intent
-                Intent intent = googleSignInClient.getSignInIntent();
-                //Start Activity for result
-                startActivityForResult(intent,100);
-            }
-        });
+//        googleSignInClient = GoogleSignIn.getClient(LoginActivity.this, googleSignInOptions);
+//        btnSignIn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //Initialize sign in intent
+//                Intent intent = googleSignInClient.getSignInIntent();
+//                //Start Activity for result
+//                startActivityForResult(intent,100);
+//            }
+//        });
 
         //Initialize firebase auth
         mAuth = FirebaseAuth.getInstance();

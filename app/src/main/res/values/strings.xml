@@ -32,5 +32,8 @@
     <string name="confirm">Confirm</string>
     <string name="empty_field">This field is empty</string>
     <string name="invalid_field">This is invalid!</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
     <string name="map">Map</string>
 </resources>

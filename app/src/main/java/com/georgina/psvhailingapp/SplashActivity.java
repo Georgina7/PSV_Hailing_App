@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
                     checkIfUserIsDriver();
                 }
                 else{
-                    sendUserToRegister();
+                    sendUserToLogin();
                 }
 
             }
@@ -69,12 +70,13 @@ public class SplashActivity extends AppCompatActivity {
         };
         driver_idRef.addListenerForSingleValueEvent(eventListener);
     }
-    public void sendUserToRegister() {
-        Intent intent = new Intent(SplashActivity.this,MainActivity.class);
+    public void sendUserToLogin() {
+        Intent intent = new Intent(SplashActivity.this,LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+
     }
     private void sendUserToMain(){
         Intent mainIntent = new Intent(SplashActivity.this,PassengerMapActivity.class);

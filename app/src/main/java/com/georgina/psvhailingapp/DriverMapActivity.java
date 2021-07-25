@@ -30,7 +30,6 @@ public class DriverMapActivity extends AppCompatActivity implements NavigationVi
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
     private NavigationView navigationView;
-    GoogleSignInClient googleSignInClient;
     private TextView profileFullName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +48,7 @@ public class DriverMapActivity extends AppCompatActivity implements NavigationVi
             //Toast.makeText(getApplicationContext(), mCurrentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
             profileFullName.setText(mCurrentUser.getDisplayName());
         }
-        //Initialize sign in client
-        googleSignInClient = GoogleSignIn.getClient(DriverMapActivity.this,
-                GoogleSignInOptions.DEFAULT_SIGN_IN);
+
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new DriverMapsFragment()).commit();
             navigationView.setCheckedItem(R.id.map);
@@ -82,26 +79,14 @@ public class DriverMapActivity extends AppCompatActivity implements NavigationVi
     }
 
     public void logout(View view) {
-        googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                //Check condition
-                if(task.isSuccessful()){
-                    //Sign out from firebase
-                    mAuth.signOut();
-                    //display toast
-                    Toast.makeText(getApplicationContext(), "Logout Successful", Toast.LENGTH_SHORT).show();
-                    //finish activity
-                    finish();
-                }
-            }
-        });
-        sendUserToRegister();
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(getApplicationContext(), "Logout Successful", Toast.LENGTH_SHORT).show();
+        finish();
+        sendUserToLogin();
     }
 
-    private void sendUserToRegister() {
-        mAuth.signOut();
-        Intent mainIntent = new Intent(DriverMapActivity.this,MainActivity.class);
+    private void sendUserToLogin() {
+        Intent mainIntent = new Intent(DriverMapActivity.this,LoginActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
