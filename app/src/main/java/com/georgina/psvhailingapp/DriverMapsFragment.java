@@ -35,7 +35,7 @@ public class DriverMapsFragment extends Fragment {
         public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
             mMap = googleMap;
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
             }
             mMap.setMyLocationEnabled(true);
         }
