@@ -42,13 +42,13 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
         <Button
-            android:id="@+id/search"
+            android:id="@+id/btn_search"
             android:onClick="search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:height="@dimen/_48sdp"
             android:layout_margin="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:text="Next"
             app:layout_constraintTop_toBottomOf="@+id/info" />
 

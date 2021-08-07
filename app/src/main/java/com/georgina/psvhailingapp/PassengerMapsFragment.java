@@ -3,11 +3,14 @@ package com.georgina.psvhailingapp;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +42,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PassengerMapsFragment extends Fragment {
 
@@ -49,6 +55,9 @@ public class PassengerMapsFragment extends Fragment {
     private FirebaseUser mCurrentUser;
     //private String driver_id;
     private TextView mMatatuPlate;
+    private Button mSearch;
+    private TextInputLayout mFrom;
+    private TextInputLayout mWhere;
     //    private TextView mDriverNumber;
 //    private TextView mStart;
 //    private TextView mDestination;
@@ -94,6 +103,11 @@ public class PassengerMapsFragment extends Fragment {
         mHeaderLayout = view.findViewById(R.id.header_layout);
         mHeaderArrow = view.findViewById(R.id.arrow);
         mInputLayout = view.findViewById(R.id.input_location);
+
+        mSearch = view.findViewById(R.id.btn_search);
+        mFrom = view.findViewById(R.id.from);
+        mWhere = view.findViewById(R.id.where_to);
+
         //driver_id = "lWzaj102lsZEupT5WERAQS3GmUB2";
         firebaseDatabase = FirebaseDatabase.getInstance();
         driverDatabaseReference = firebaseDatabase.getReference("Users").child("Driver");
@@ -107,6 +121,23 @@ public class PassengerMapsFragment extends Fragment {
         adapter = new DriverRouteAdapter(options);
         adapter.startListening();
         recyclerView.setAdapter(adapter);
+        mSearch.setVisibility(View.GONE);
+        mFrom.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(v.isFocused()){
+                    mSearch.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        mWhere.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(v.isFocused()){
+                    mSearch.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
 //        driverDatabaseReference.addValueEventListener(new ValueEventListener() {
 //            @Override
@@ -181,9 +212,8 @@ public class PassengerMapsFragment extends Fragment {
     }
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
-        }
-        else {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+        } else {
             Task<Location> task = client.getLastLocation();
             task.addOnSuccessListener(location -> {
                 if (location != null) {
@@ -197,13 +227,79 @@ public class PassengerMapsFragment extends Fragment {
                                     .title("Your Location");
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
                             googleMap.addMarker(markerOptions);
+
+                            mSearch.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String source = mFrom.getEditText().getText().toString();
+                                    String destination = mWhere.getEditText().getText().toString();
+                                    Geocoder geocoder = new Geocoder(getContext());
+
+                                    if (!validateSource() || !validateDestination()) {
+                                        return;
+                                    }
+                                    else {
+                                    List<Address> addressList = null;
+                                    try {
+                                        addressList = geocoder.getFromLocationName(source, 1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    assert addressList != null;
+                                    Address sourceAddress = addressList.get(0);
+                                    LatLng sLatlng = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+                                    MarkerOptions markerOptions1 = new MarkerOptions().position(sLatlng)
+                                            .title(source);
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sLatlng, 20));
+                                    mMap.addMarker(markerOptions1);
+
+                                    List<Address> addressList1 = null;
+                                    try {
+                                        addressList1 = geocoder.getFromLocationName(destination, 1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    assert addressList1 != null;
+                                    Address destAddress = addressList1.get(0);
+                                    LatLng dLatlng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+                                    MarkerOptions markerOptions2 = new MarkerOptions().position(dLatlng)
+                                            .title(destination);
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dLatlng, 20));
+                                    mMap.addMarker(markerOptions2);
+                                    }
+                                }
+                            });
                         }
                     });
-
                 }
             });
         }
     }
+    private boolean validateSource(){
+        String routes = mFrom.getEditText().getText().toString().trim();
+        if(routes.isEmpty()){
+            mFrom.setError(getString(R.string.empty_field));
+            return false;
+        }
+        else {
+            mFrom.setError(null);
+            return true;
+        }
+
+    }
+    private boolean validateDestination(){
+        String routes =  mWhere.getEditText().getText().toString().trim();
+        if(routes.isEmpty()){
+            mWhere.setError(getString(R.string.empty_field));
+            return false;
+        }
+        else {
+            mWhere.setError(null);
+            return true;
+        }
+
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
