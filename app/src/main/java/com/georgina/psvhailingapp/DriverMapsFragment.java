@@ -1,6 +1,7 @@
 package com.georgina.psvhailingapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -22,12 +23,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
 public class DriverMapsFragment extends Fragment {
 
     private GoogleMap mMap;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mCurrentUser;
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -47,7 +52,8 @@ public class DriverMapsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_driver_maps, container, false);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.google_map);
-
+        mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
@@ -56,7 +62,14 @@ public class DriverMapsFragment extends Fragment {
 
         return view;
     }
-
+    @Override
+    public void onStart(){
+        super.onStart();
+        if (mCurrentUser == null){
+            Intent intent = new Intent(getContext(),LoginActivity.class);
+            startActivity(intent);
+        }
+    }
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);

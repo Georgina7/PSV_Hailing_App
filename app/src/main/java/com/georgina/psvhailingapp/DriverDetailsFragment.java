@@ -1,19 +1,21 @@
 package com.georgina.psvhailingapp;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class DriverDetailsFragment extends Fragment {
     private TextInputLayout mRoutes;
@@ -33,6 +37,7 @@ public class DriverDetailsFragment extends Fragment {
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private SwitchMaterial status;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -73,7 +78,37 @@ public class DriverDetailsFragment extends Fragment {
             dialog.setNegativeButton("Dismiss", (dialog12, which) -> dialog12.dismiss());
             dialog.show();
         });
+        status = view.findViewById(R.id.driverAvailability);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("save",MODE_PRIVATE);
+        status.setChecked(sharedPreferences.getBoolean("value",false));
+        status.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(status.isChecked()){
+                    SharedPreferences.Editor editor = getContext().getSharedPreferences("save",MODE_PRIVATE).edit();
+                    editor.putBoolean("value",true);
+                    editor.apply();
+                    status.setChecked(true);
+                    status.setText("Available");
+                }
+                else{
+                    SharedPreferences.Editor editor = getContext().getSharedPreferences("save",MODE_PRIVATE).edit();
+                    editor.putBoolean("value",false);
+                    editor.apply();
+                    status.setChecked(false);
+                    status.setText("Not Available");
+                }
+            }
+        });
         return view;
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        if (mCurrentUser == null){
+            Intent intent = new Intent(getContext(),LoginActivity.class);
+            startActivity(intent);
+        }
     }
     private boolean validateSeatsAvailable(){
         int seatsAvailable = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
@@ -139,15 +174,32 @@ public class DriverDetailsFragment extends Fragment {
     }
     private void updateDriverDetails(String user_id){
 
-        String licence_number = mLicenceNo.getEditText().getText().toString();
-        String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
-        String routes = mRoutes.getEditText().getText().toString();
-        int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
+        if (status.isChecked()) {
+            status.setChecked(true);
+            String driverStatus = "active";
+            String licence_number = mLicenceNo.getEditText().getText().toString();
+            String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
+            String routes = mRoutes.getEditText().getText().toString();
+            int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available);
-        databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
-        databaseReference.setValue(driverDetails);
+            firebaseDatabase = FirebaseDatabase.getInstance();
+            DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverStatus);
+            databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
+            databaseReference.setValue(driverDetails);
+        }
+        else {
+            status.setChecked(false);
+            String driverStatus = "Not active";
+            String licence_number = mLicenceNo.getEditText().getText().toString();
+            String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
+            String routes = mRoutes.getEditText().getText().toString();
+            int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
+
+            firebaseDatabase = FirebaseDatabase.getInstance();
+            DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverStatus);
+            databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
+            databaseReference.setValue(driverDetails);
+        }
     }
     private void getDriverData() {
 
