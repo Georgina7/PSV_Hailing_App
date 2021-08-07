@@ -40,6 +40,7 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
     GoogleSignInClient googleSignInClient;
     private NavigationView navigationView;
     private TextView profileFullName;
+    private Button viewProfileBtn;
 
 
     @Override

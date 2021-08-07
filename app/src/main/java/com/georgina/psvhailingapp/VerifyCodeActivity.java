@@ -1,7 +1,9 @@
 package com.georgina.psvhailingapp;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
     private EditText mCode;
     private String mPhoneNumber;
     private TextView mTextViewNo;
+    private String loggedInUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
         mCurrentUser = mAuth.getCurrentUser();
         mAuthVerificationId = getIntent().getStringExtra("AuthCredentials");
         mPhoneNumber = getIntent().getStringExtra("phoneNumber");
+        loggedInUserId = getIntent().getStringExtra("UserId");
         mTextViewNo.setText(mPhoneNumber);
     }
 
@@ -66,8 +70,12 @@ public class VerifyCodeActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            mCurrentUser = task.getResult().getUser();
-                            checkIfAccountIsCreated(mCurrentUser.getUid());
+                            if(!loggedInUserId.isEmpty()){
+                                readLoggedInUserDetails();
+                            }else{
+                                mCurrentUser = task.getResult().getUser();
+                                checkIfAccountIsCreated(mCurrentUser.getUid());
+                            }
 
                         } else {
 
@@ -80,16 +88,44 @@ public class VerifyCodeActivity extends AppCompatActivity {
                     }
                 });
     }
-    protected void onStart(){
-        super.onStart();
-        if(mCurrentUser != null){
-            checkIfAccountIsCreated(mCurrentUser.getUid());
-        }
+//    protected void onStart(){
+//        super.onStart();
+//        if(mCurrentUser != null){
+//            checkIfAccountIsCreated(mCurrentUser.getUid());
+//        }
+//    }
+
+    public void readLoggedInUserDetails(){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Users").child(loggedInUserId);
+        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                } else {
+                    DataSnapshot dataSnapshot = task.getResult();
+                    String email = String.valueOf(dataSnapshot.child("email").getValue());
+                    String fullName = String.valueOf(dataSnapshot.child("fullName").getValue());
+                    String imgPath = String.valueOf(dataSnapshot.child("profileImagePath").getValue());
+                    updateUserContact(email, fullName, imgPath);
+                }
+            }
+        });
+    }
+
+    private void updateUserContact(String email, String fullName, String imgPath){
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        User user = new User(fullName, email, mPhoneNumber, imgPath);
+        databaseReference = firebaseDatabase.getReference("Users").child(mCurrentUser.getUid());
+        databaseReference.setValue(user);
+        Toast.makeText(getApplicationContext(),"Contact Updated Successfully", Toast.LENGTH_SHORT).show();
+        sendUserToProfile();
     }
 
     public void checkIfAccountIsCreated(String user_id){
         DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users");
-        DatabaseReference driver_idRef = database.child(user_id);
+        DatabaseReference user_idRef = database.child(user_id);
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -104,7 +140,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         };
-        driver_idRef.addListenerForSingleValueEvent(eventListener);
+        user_idRef.addListenerForSingleValueEvent(eventListener);
     }
 
     private void sendUserToAccountCreation(){
@@ -130,8 +166,14 @@ public class VerifyCodeActivity extends AppCompatActivity {
         startActivity(mainIntent);
         finish();
     }
+    private void sendUserToProfile(){
+        Intent mainIntent = new Intent(VerifyCodeActivity.this,ProfileActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+    }
     private void checkIfUserIsDriver(){
-
         String user_id = mCurrentUser.getUid();
         DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users");
         DatabaseReference driver_idRef = database.child("Driver").child(user_id);

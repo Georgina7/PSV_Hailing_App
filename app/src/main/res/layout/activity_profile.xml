@@ -108,12 +108,24 @@
             android:backgroundTint="@color/white"
             android:paddingTop="@dimen/_20sdp"
             android:fontFamily="@font/open_sans_regular"
-            android:inputType="phone"/>
+            android:inputType="none"/>
+
 
 
     </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+    <ImageView
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/_11sdp"
+        android:background="@color/pwd_color_accent"
+        android:onClick="editContact"
+        android:padding="@dimen/_4sdp"
+        android:src="@drawable/ic_edit"
+        app:layout_constraintTop_toTopOf="@id/edit_profile_contact"
+        app:layout_constraintRight_toRightOf="@id/edit_profile_contact" />
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_update_profile"

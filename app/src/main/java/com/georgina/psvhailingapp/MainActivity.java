@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(mainIntent);
         finish();
     }
+
 //    private void sendDriverToMain(){
 //        Intent mainIntent = new Intent(MainActivity.this,DriverMapActivity.class);
 //        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -48,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mLoginMessage;
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
+    private String loggedInUserId;
 
 //    private SignInButton btnSignIn;
 //    GoogleSignInClient googleSignInClient;
@@ -62,11 +63,11 @@ public class LoginActivity extends AppCompatActivity {
         //Assign Variable
        // btnSignIn = findViewById(R.id.sign_in_button);
 
-        //Initialize sign in options
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(
-                GoogleSignInOptions.DEFAULT_SIGN_IN
-        ).requestIdToken("917593455964-1p2degt72t1ljnuadg1f6cakgie0pkp3.apps.googleusercontent.com")
-                .build();
+//        //Initialize sign in options
+//        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(
+//                GoogleSignInOptions.DEFAULT_SIGN_IN
+//        ).requestIdToken("917593455964-1p2degt72t1ljnuadg1f6cakgie0pkp3.apps.googleusercontent.com")
+//                .build();
 
         //Initialize sign in client
 //        googleSignInClient = GoogleSignIn.getClient(LoginActivity.this, googleSignInOptions);
@@ -85,77 +86,83 @@ public class LoginActivity extends AppCompatActivity {
         //Initialize firebase user
         mCurrentUser = mAuth.getCurrentUser();
 
-        if(mCurrentUser != null){
-            //When user already signed in redirect to profile activity
-            startActivity(new Intent(LoginActivity.this,
-                    ProfileActivity.class)
-            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        }
+//        if(mCurrentUser != null){
+//            //When user already signed in redirect to profile activity
+//            startActivity(new Intent(LoginActivity.this,
+//                    ProfileActivity.class)
+//            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//        }
 
         mCountryCodePicker = findViewById(R.id.countryCodePicker);
         mPhoneNumber = findViewById(R.id.p_number);
         mLoginMessage = findViewById(R.id.messageText);
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //Check condition
-        if(requestCode == 100){
-            //Initialize task
-            Task<GoogleSignInAccount> signInAccountTask = GoogleSignIn
-                    .getSignedInAccountFromIntent(data);
-
-            //Check condition
-            if(signInAccountTask.isSuccessful()){
-                //When google sign in is successful
-                displayToast("Google sign in successful");
-                try{
-                    //Initialize sign in account
-                    GoogleSignInAccount googleSignInAccount = signInAccountTask
-                            .getResult(ApiException.class);
-                    //Check condition
-                    if(googleSignInAccount != null){
-                        //When sign in account is not equal to null
-                        //Initialize auth credential
-                        AuthCredential authCredential = GoogleAuthProvider
-                                .getCredential(googleSignInAccount.getIdToken()
-                                , null);
-
-                        //Check credential
-                        mAuth.signInWithCredential(authCredential)
-                                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
-                                       //Check condition
-                                       if(task.isSuccessful()){
-                                           //When task is successful
-                                           //Redirect to profile activity
-                                           startActivity(new Intent(LoginActivity.this,
-                                                   PassengerMapActivity.class)
-                                           .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
-                                           displayToast("Firebase authentication successful");
-                                       }else{
-                                           ///When task is unsuccessful
-                                           displayToast("Authentication failed : " + task.getException().getMessage());
-                                       }
-                                    }
-                                });
-                    }
-                }catch (ApiException e){
-                    e.getMessage();
-                }
-            }else{
-                displayToast("Didn't work" + signInAccountTask.getException());
-            }
+        if(getIntent().getExtras() != null){
+            loggedInUserId = getIntent().getStringExtra("UserId");
+        }else{
+            loggedInUserId = "";
         }
+
     }
 
-    private void displayToast(String message){
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        //Check condition
+//        if(requestCode == 100){
+//            //Initialize task
+//            Task<GoogleSignInAccount> signInAccountTask = GoogleSignIn
+//                    .getSignedInAccountFromIntent(data);
+//
+//            //Check condition
+//            if(signInAccountTask.isSuccessful()){
+//                //When google sign in is successful
+//                displayToast("Google sign in successful");
+//                try{
+//                    //Initialize sign in account
+//                    GoogleSignInAccount googleSignInAccount = signInAccountTask
+//                            .getResult(ApiException.class);
+//                    //Check condition
+//                    if(googleSignInAccount != null){
+//                        //When sign in account is not equal to null
+//                        //Initialize auth credential
+//                        AuthCredential authCredential = GoogleAuthProvider
+//                                .getCredential(googleSignInAccount.getIdToken()
+//                                , null);
+//
+//                        //Check credential
+//                        mAuth.signInWithCredential(authCredential)
+//                                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
+//                                       //Check condition
+//                                       if(task.isSuccessful()){
+//                                           //When task is successful
+//                                           //Redirect to profile activity
+//                                           startActivity(new Intent(LoginActivity.this,
+//                                                   PassengerMapActivity.class)
+//                                           .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//
+//                                           displayToast("Firebase authentication successful");
+//                                       }else{
+//                                           ///When task is unsuccessful
+//                                           displayToast("Authentication failed : " + task.getException().getMessage());
+//                                       }
+//                                    }
+//                                });
+//                    }
+//                }catch (ApiException e){
+//                    e.getMessage();
+//                }
+//            }else{
+//                displayToast("Didn't work" + signInAccountTask.getException());
+//            }
+//        }
+//    }
+
+//    private void displayToast(String message){
+//        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+//    }
 
     public void Next(View view) {
         String pNumber = mPhoneNumber.getText().toString();
@@ -195,6 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 Intent codeIntent = new Intent(LoginActivity.this, VerifyCodeActivity.class);
                                                 codeIntent.putExtra("AuthCredentials", s);
                                                 codeIntent.putExtra("phoneNumber",PhoneNumber);
+                                                codeIntent.putExtra("UserId", loggedInUserId);
                                                 startActivity(codeIntent);
                                             },
                                             10000
@@ -210,8 +218,10 @@ public class LoginActivity extends AppCompatActivity {
 
     protected void onStart(){
         super.onStart();
-        if(mCurrentUser != null){
+        if(mCurrentUser != null && loggedInUserId.isEmpty()){
             checkIfUserIsDriver();
+        }else{
+            Toast.makeText(getApplicationContext(), loggedInUserId, Toast.LENGTH_SHORT).show();
         }
     }
 
