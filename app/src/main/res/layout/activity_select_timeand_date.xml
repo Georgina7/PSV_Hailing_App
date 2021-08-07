@@ -87,16 +87,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time"
         android:layout_marginStart="@dimen/_16sdp" />
+
+    <TextView
+        android:id="@+id/seats_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/open_sans_regular"
+        android:text="Select seats"
+        app:layout_constraintBottom_toBottomOf="@+id/no_seats"
+        app:layout_constraintEnd_toStartOf="@+id/no_seats"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/additional_information_text"
+        app:layout_constraintVertical_bias="0.562" />
+
+    <NumberPicker
+        android:id="@+id/no_seats"
+        android:layout_width="56dp"
+        android:layout_height="91dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.343"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/additional_information_text" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/_16sdp"
         android:layout_marginLeft="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_16sdp"
-        app:helperText="eg. I am in a wheelchair"
         app:errorEnabled="true"
-        app:layout_constraintTop_toBottomOf="@+id/additional_information_text"
+        app:helperText="eg. I am in a wheelchair"
+        app:layout_constraintTop_toBottomOf="@+id/no_seats"
         app:startIconDrawable="@drawable/ic_short_text"
         app:startIconTint="@color/pwd_color_accent">
 

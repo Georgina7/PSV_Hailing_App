@@ -58,6 +58,9 @@ public class PassengerMapsFragment extends Fragment {
     private Button mSearch;
     private TextInputLayout mFrom;
     private TextInputLayout mWhere;
+    public static String EXTRA_SOURCE = "source";
+    public static String EXTRA_DEST = "dest";
+
     //    private TextView mDriverNumber;
 //    private TextView mStart;
 //    private TextView mDestination;
@@ -239,33 +242,38 @@ public class PassengerMapsFragment extends Fragment {
                                         return;
                                     }
                                     else {
-                                    List<Address> addressList = null;
-                                    try {
-                                        addressList = geocoder.getFromLocationName(source, 1);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    assert addressList != null;
-                                    Address sourceAddress = addressList.get(0);
-                                    LatLng sLatlng = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
-                                    MarkerOptions markerOptions1 = new MarkerOptions().position(sLatlng)
-                                            .title(source);
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sLatlng, 20));
-                                    mMap.addMarker(markerOptions1);
+                                        List<Address> addressList = null;
+                                        try {
+                                            addressList = geocoder.getFromLocationName(source, 1);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        assert addressList != null;
+                                        Address sourceAddress = addressList.get(0);
+                                        LatLng sLatlng = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+                                        MarkerOptions markerOptions1 = new MarkerOptions().position(sLatlng)
+                                                .title(source);
+                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sLatlng, 20));
+                                        mMap.addMarker(markerOptions1);
 
-                                    List<Address> addressList1 = null;
-                                    try {
-                                        addressList1 = geocoder.getFromLocationName(destination, 1);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    assert addressList1 != null;
-                                    Address destAddress = addressList1.get(0);
-                                    LatLng dLatlng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
-                                    MarkerOptions markerOptions2 = new MarkerOptions().position(dLatlng)
-                                            .title(destination);
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dLatlng, 20));
-                                    mMap.addMarker(markerOptions2);
+                                        List<Address> addressList1 = null;
+                                        try {
+                                            addressList1 = geocoder.getFromLocationName(destination, 1);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        assert addressList1 != null;
+                                        Address destAddress = addressList1.get(0);
+                                        LatLng dLatlng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+                                        MarkerOptions markerOptions2 = new MarkerOptions().position(dLatlng)
+                                                .title(destination);
+                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dLatlng, 20));
+                                        mMap.addMarker(markerOptions2);
+
+                                        Intent bookingIntent = new Intent(getContext(),SelectTimeandDateActivity.class);
+                                        bookingIntent.putExtra(EXTRA_SOURCE,source);
+                                        bookingIntent.putExtra(EXTRA_DEST,destination);
+                                        startActivity(bookingIntent);
                                     }
                                 }
                             });
