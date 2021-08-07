@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.NumberPicker;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +20,8 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -29,6 +33,9 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     private TextInputLayout mDate;
     private TextInputLayout mTime;
     private TextInputLayout mInfo;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private NumberPicker mSeats;
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +46,9 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         mDate = findViewById(R.id.date);
         mTime = findViewById(R.id.time);
         mInfo = findViewById(R.id.info);
+        mSeats = findViewById(R.id.no_seats);
+        mSeats.setMaxValue(50);
+        mSeats.setMinValue(0);
 
         //Calendar for Date Picker
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(getString(R.string.utc)));
@@ -117,7 +127,31 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         if (!validateDate() | !validateTime() | !validateInfo()){
             return;
         }
+        else{
+            addBookingDetails();
+            Toast.makeText(SelectTimeandDateActivity.this,"Data has been added",Toast.LENGTH_SHORT).show();
+        }
     }
+
+    private void addBookingDetails() {
+        Intent i = getIntent();
+        String source = i.getStringExtra(PassengerMapsFragment.EXTRA_SOURCE);
+        String dest = i.getStringExtra(PassengerMapsFragment.EXTRA_DEST);
+        String pwd_id = mCurrentUser.getUid();
+        String driver_id = "njkcsdicn";
+        String status = "pending";
+        int seat = mSeats.getValue();
+        String date = mDate.getEditText().getText().toString();
+        String time = mTime.getEditText().getText().toString();
+        String info = mInfo.getEditText().getText().toString();
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        Trip trip = new Trip(pwd_id,driver_id,source,dest,date,time,info,status,seat);
+        databaseReference = firebaseDatabase.getReference("Trips");
+        String key = databaseReference.push().getKey();
+        databaseReference.child(key).setValue(trip);
+    }
+
     //Validation of Input Fields
     private boolean validateInfo(){
         String info = mInfo.getEditText().getText().toString().trim();
