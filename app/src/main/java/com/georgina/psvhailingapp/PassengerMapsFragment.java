@@ -1,24 +1,29 @@
 package com.georgina.psvhailingapp;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,15 +34,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PassengerMapsFragment extends Fragment {
 
@@ -45,19 +52,27 @@ public class PassengerMapsFragment extends Fragment {
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
     private FirebaseAuth mAuth;
-    private String driver_id;
+    private FirebaseUser mCurrentUser;
+    //private String driver_id;
     private TextView mMatatuPlate;
-    private TextView mDriverNumber;
-    private TextView mStart;
-    private TextView mDestination;
-    private TextView mDriverName;
+    private Button mSearch;
+    private TextInputLayout mFrom;
+    private TextInputLayout mWhere;
+    //    private TextView mDriverNumber;
+//    private TextView mStart;
+//    private TextView mDestination;
+//    private TextView mDriverName;
     private ImageView mHeaderArrow;
     private ConstraintLayout mRoutesBottomSheet;
     private LinearLayout mHeaderLayout;
+    private LinearLayout mInputLayout;
     private BottomSheetBehavior mBottomSheetBehavior;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference driverDatabaseReference;
     private DatabaseReference user_driverDatabaseReference;
+    private RecyclerView recyclerView;
+    private DriverRouteAdapter adapter;
+    private ArrayList<DriverDetails> list;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
@@ -76,24 +91,77 @@ public class PassengerMapsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_passenger_maps, container, false);
         mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
         mMatatuPlate = view.findViewById(R.id.no_plate);
-        mDriverNumber = view.findViewById(R.id.driver_number);
-        mStart = view.findViewById(R.id.Start);
-        mDestination = view.findViewById(R.id.destination);
-        mDriverName = view.findViewById(R.id.driver_name);
+//        mDriverNumber = view.findViewById(R.id.driver_number);
+//        mStart = view.findViewById(R.id.Start);
+//        mDestination = view.findViewById(R.id.destination);
+//        mDriverName = view.findViewById(R.id.driver_name);
         mRoutesBottomSheet = view.findViewById(R.id.available_routes_bottom_sheet);
         mBottomSheetBehavior = BottomSheetBehavior.from(mRoutesBottomSheet);
         mBottomSheetBehavior.setHideable(false);
         mHeaderLayout = view.findViewById(R.id.header_layout);
         mHeaderArrow = view.findViewById(R.id.arrow);
-        driver_id = "lWzaj102lsZEupT5WERAQS3GmUB2";
+        mInputLayout = view.findViewById(R.id.input_location);
+
+        mSearch = view.findViewById(R.id.btn_search);
+        mFrom = view.findViewById(R.id.from);
+        mWhere = view.findViewById(R.id.where_to);
+
+        //driver_id = "lWzaj102lsZEupT5WERAQS3GmUB2";
         firebaseDatabase = FirebaseDatabase.getInstance();
-        driverDatabaseReference = firebaseDatabase.getReference("Users").child("Driver").child(driver_id);
-        user_driverDatabaseReference = firebaseDatabase.getReference("Users").child(driver_id);
-        getAvailableRoutes();
+        driverDatabaseReference = firebaseDatabase.getReference("Users").child("Driver");
+        recyclerView = view.findViewById(R.id.recycler_routes);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        FirebaseRecyclerOptions<DriverDetails> options = new
+                FirebaseRecyclerOptions.Builder<DriverDetails>()
+                .setQuery(driverDatabaseReference,DriverDetails.class)
+                .build();
+        adapter = new DriverRouteAdapter(options);
+        adapter.startListening();
+        recyclerView.setAdapter(adapter);
+        mSearch.setVisibility(View.GONE);
+        mFrom.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(v.isFocused()){
+                    mSearch.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        mWhere.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(v.isFocused()){
+                    mSearch.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+//        driverDatabaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+//                    DriverDetails driverDetails = dataSnapshot.getValue(DriverDetails.class);
+//                    list.add(driverDetails);
+//                }
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//
+//            }
+//        });
+
+//        getAvailableRoutes();
+        //driverDatabaseReference = firebaseDatabase.getReference("Users").child("Driver").child(driver_id);
+        //user_driverDatabaseReference = firebaseDatabase.getReference("Users").child(driver_id);
+        //getAvailableRoutes();
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.google_map);
-        Toast toast = Toast.makeText(getContext(),driver_id,Toast.LENGTH_SHORT);
-        toast.show();
+        //Toast toast = Toast.makeText(getContext(),driver_id,Toast.LENGTH_SHORT);
+        //toast.show();
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
             mBottomSheetBehavior.setHideable(false);
@@ -107,9 +175,11 @@ public class PassengerMapsFragment extends Fragment {
             public void onClick(View v) {
                 if(mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    mInputLayout.setVisibility(View.GONE);
                 }
                 else {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    mInputLayout.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -126,11 +196,24 @@ public class PassengerMapsFragment extends Fragment {
         });
         return view;
     }
+    @Override
+    public void onStart(){
+        super.onStart();
+        adapter.startListening();
+        if (mCurrentUser == null){
+            Intent intent = new Intent(getContext(),LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+    public void onStop() {
+
+        super.onStop();
+        adapter.stopListening();
+    }
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
-        }
-        else {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+        } else {
             Task<Location> task = client.getLastLocation();
             task.addOnSuccessListener(location -> {
                 if (location != null) {
@@ -144,13 +227,79 @@ public class PassengerMapsFragment extends Fragment {
                                     .title("Your Location");
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
                             googleMap.addMarker(markerOptions);
+
+                            mSearch.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String source = mFrom.getEditText().getText().toString();
+                                    String destination = mWhere.getEditText().getText().toString();
+                                    Geocoder geocoder = new Geocoder(getContext());
+
+                                    if (!validateSource() || !validateDestination()) {
+                                        return;
+                                    }
+                                    else {
+                                    List<Address> addressList = null;
+                                    try {
+                                        addressList = geocoder.getFromLocationName(source, 1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    assert addressList != null;
+                                    Address sourceAddress = addressList.get(0);
+                                    LatLng sLatlng = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+                                    MarkerOptions markerOptions1 = new MarkerOptions().position(sLatlng)
+                                            .title(source);
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sLatlng, 20));
+                                    mMap.addMarker(markerOptions1);
+
+                                    List<Address> addressList1 = null;
+                                    try {
+                                        addressList1 = geocoder.getFromLocationName(destination, 1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    assert addressList1 != null;
+                                    Address destAddress = addressList1.get(0);
+                                    LatLng dLatlng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+                                    MarkerOptions markerOptions2 = new MarkerOptions().position(dLatlng)
+                                            .title(destination);
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dLatlng, 20));
+                                    mMap.addMarker(markerOptions2);
+                                    }
+                                }
+                            });
                         }
                     });
-
                 }
             });
         }
     }
+    private boolean validateSource(){
+        String routes = mFrom.getEditText().getText().toString().trim();
+        if(routes.isEmpty()){
+            mFrom.setError(getString(R.string.empty_field));
+            return false;
+        }
+        else {
+            mFrom.setError(null);
+            return true;
+        }
+
+    }
+    private boolean validateDestination(){
+        String routes =  mWhere.getEditText().getText().toString().trim();
+        if(routes.isEmpty()){
+            mWhere.setError(getString(R.string.empty_field));
+            return false;
+        }
+        else {
+            mWhere.setError(null);
+            return true;
+        }
+
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -160,34 +309,23 @@ public class PassengerMapsFragment extends Fragment {
             }
         }
     }
-    private void getAvailableRoutes(){
-        driverDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                DriverDetails driverDetails = snapshot.getValue(DriverDetails.class);
-                mMatatuPlate.setText(driverDetails.getMatatuPlate());
-                String Routes = driverDetails.getRoutes();
-                String[] routes = Routes.split("-");
-                mStart.setText(routes[0]);
-                mDestination.setText(routes[1]);
-            }
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                Toast.makeText(getContext(), "Fail to get data.", Toast.LENGTH_SHORT).show();
-            }
-        });
-        user_driverDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                mDriverNumber.setText(user.getNumber());
-                mDriverName.setText(user.getFullName());
-            }
-
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                Toast.makeText(getContext(), "Fail to get data.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void getAvailableRoutes(){
+//       driverDatabaseReference.addValueEventListener(new ValueEventListener() {
+//           @Override
+//           public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//               for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+//                   DriverDetails driverDetails = dataSnapshot.getValue(DriverDetails.class);
+//                    list.add(driverDetails);
+//               }
+//               adapter = new DriverRouteAdapter(getContext(),list);
+//               recyclerView.setAdapter(adapter);
+//               adapter.notifyDataSetChanged();
+//           }
+//
+//           @Override
+//           public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//
+//           }
+//       });
+//    }
 }
