@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_5sdp">
+        <TextView
+            android:id="@+id/pwd_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customer Name"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingLeft="@dimen/_5sdp"
+            android:fontFamily="@font/open_sans_regular"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/pwd_contact_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+254 705 999 817"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingLeft="@dimen/_5sdp"
+            android:fontFamily="@font/open_sans_regular"
+            android:textColor="@color/black"
+            android:layout_below="@id/pwd_name_text_view"/>
+        <TextView
+            android:id="@+id/pwd_time_date_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="12th Tue 2021, 9:00a.m"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingLeft="@dimen/_5sdp"
+            android:fontFamily="@font/open_sans_regular"
+            android:textColor="@color/black"
+            android:layout_below="@id/pwd_contact_text_view"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pwd_time_date_text_view">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="From: "
+                android:paddingLeft="@dimen/_5sdp"
+                android:fontFamily="@font/open_sans_regular"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/pwd_source_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Madaraka"
+                android:padding="@dimen/_5sdp"
+                android:fontFamily="@font/open_sans_regular"
+                android:textColor="@color/psv_color_accent"
+                android:layout_below="@id/pwd_contact_text_view"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To: "
+                android:paddingLeft="@dimen/_10sdp"
+                android:fontFamily="@font/open_sans_regular"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/pwd_destination_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kitengela"
+                android:padding="@dimen/_10sdp"
+                android:fontFamily="@font/open_sans_regular"
+                android:textColor="@color/psv_color_accent"
+                android:layout_below="@id/pwd_contact_text_view"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</androidx.cardview.widget.CardView>

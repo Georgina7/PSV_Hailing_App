@@ -44,7 +44,8 @@ public class ProfileActivity extends AppCompatActivity {
     private User user;
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private String selectedImagePath;
-
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
@@ -56,9 +57,9 @@ public class ProfileActivity extends AppCompatActivity {
         selectedImagePath = "";
 
         //Initialize firebase auth
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         //Initialize firebase user
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        firebaseUser = firebaseAuth.getCurrentUser();
 
         user = new User();
 
@@ -160,5 +161,11 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         return filePath;
+    }
+
+    public void editContact(View view) {
+        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+        intent.putExtra("UserId", firebaseUser.getUid());
+        startActivity(intent);
     }
 }
