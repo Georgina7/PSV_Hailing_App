@@ -6,15 +6,58 @@
     android:id="@+id/available_routes_bottom_sheet"
     android:background="@color/white"
     app:layout_behavior="@string/bottom_sheet_behavior"
-    app:behavior_peekHeight="@dimen/_52sdp"
+    app:behavior_peekHeight="@dimen/_200sdp"
     app:behavior_hideable="false">
     <LinearLayout
-        android:id="@+id/header_layout"
+        android:id="@+id/input_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
+        android:background="@drawable/bottom_sheet_bar_top"
+        android:padding="@dimen/_20sdp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/from"
+            app:startIconDrawable="@drawable/ic_brightness"
+            android:layout_marginBottom="@dimen/_4sdp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/where_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/where_to"
+            app:startIconDrawable="@drawable/ic_location"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/btn_search"
+            android:onClick="search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:height="@dimen/_48sdp"
+            android:layout_margin="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="Next"
+            app:layout_constraintTop_toBottomOf="@+id/info" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/header_layout"
+        app:layout_constraintTop_toBottomOf="@+id/input_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@drawable/bottom_sheet_bar">
         <TextView
@@ -25,7 +68,7 @@
             android:layout_gravity="center"
             android:text="@string/available_routes"
             android:textSize="@dimen/_14ssp"
-            android:padding="@dimen/_20sdp"
+            android:padding="@dimen/_14sdp"
             android:paddingRight="@dimen/_8sdp"
             android:paddingLeft="@dimen/_20sdp"
             android:fontFamily="@font/open_sans_semibold"
@@ -43,95 +86,15 @@
             android:src="@drawable/ic_arrow_up"/>
 
     </LinearLayout>
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_routes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="500dp"
+        android:nestedScrollingEnabled="true"
+        android:layout_marginTop="@dimen/_8sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_layout"
-        android:layout_margin="8dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_85sdp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/_16sdp"
-                android:paddingBottom="@dimen/_16sdp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_start_dest" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/_16sdp">
-
-                <!-- Title, secondary and supporting text -->
-                <TextView
-                    android:id="@+id/Start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/open_sans_regular"
-                    android:text="@string/madaraka" />
-
-                <TextView
-                    android:id="@+id/destination"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_24sdp"
-                    android:fontFamily="@font/open_sans_regular"
-                    android:text="@string/cbd" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingTop="@dimen/_16sdp"
-                android:paddingBottom="@dimen/_16sdp">
-
-                <View
-                    android:layout_width="@dimen/_2sdp"
-                    android:layout_height="match_parent"
-                    android:background="@color/pwd_color_accent" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="@dimen/_16sdp">
-
-                <TextView
-                    android:id="@+id/driver_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/georgina_nyokabi" />
-
-                <TextView
-                    android:id="@+id/driver_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:text="@string/_25471234567" />
-
-                <TextView
-                    android:id="@+id/no_plate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:text="@string/kbc_778c" />
-            </LinearLayout>
-
-
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

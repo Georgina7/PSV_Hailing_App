@@ -28,7 +28,7 @@
     <string name="routes">Routes</string>
     <string name="seats_available">Seats Available</string>
     <string name="update">Update</string>
-    <string name="maps_api_key">AIzaSyAlUP4hytIAMtzBMfWQL0Eb8QwytcBWGZk</string>
+    <string name="maps_api_key">AIzaSyDG4LfDl2SkDlvsZcVx3TEc5fhVBQqVUQw</string>
     <string name="confirm">Confirm</string>
     <string name="empty_field">This field is empty</string>
     <string name="invalid_field">This is invalid!</string>
@@ -42,4 +42,18 @@
     <string name="_25471234567">+25471234567</string>
     <string name="cbd">CBD</string>
     <string name="kbc_778c">KBC 778C</string>
+    <string name="where_to">Where to?</string>
+    <string name="from">From</string>
+    <string name="select_time_and_date">Select Date and Time</string>
+    <string name="select_pickup">Select Pickup</string>
+    <string name="select_dropoff">Select Drop-off</string>
+    <string name="available">Available</string>
+    <string name="utc">UTC</string>
+    <string name="date_format">hh:mm aa</string>
+    <string name="additional_information">Additional Information</string>
+    <string name="tap_twice">Hint: Tap twice</string>
+    <string name="proceed">Proceed</string>
+    <string name="add_more">Add more</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_time">Select Time</string>
 </resources>

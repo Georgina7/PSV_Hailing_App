@@ -103,6 +103,21 @@
                 android:paddingTop="@dimen/_20sdp"
                 android:textSize="@dimen/_12ssp" />
         </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/driverAvailability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:checked="true"
+            android:fontFamily="@font/open_sans_regular"
+            android:text="@string/available"
+            android:textColor="#333333"
+            android:textSize="@dimen/_14ssp"
+            android:theme="@style/Theme.PSVHailingApp"
+            app:layout_constraintBottom_toTopOf="@id/btn_logout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.143"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btn_update"

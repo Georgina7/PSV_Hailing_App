@@ -19,9 +19,9 @@
     </style>
     <style name="Theme.DriverDetails" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/psv_color_accent</item>
+        <item name="colorPrimary">@color/pwd_color_accent</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/psv_color_accent</item>
+        <item name="colorPrimaryVariant">@color/pwd_color_accent_variant</item>
         <item name="colorError">@color/pwd_color_accent</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/pwd_color_accent</item>
@@ -29,6 +29,14 @@
         <item name="colorOnSecondary">@color/black</item>
     </style>
     <style name="Theme.DialogBox" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/psv_color_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/psv_color_accent</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/pwd_color_accent</item>
+    </style>
+    <style name="Theme.DialogBoxPWD" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/psv_color_accent</item>
         <item name="colorOnPrimary">@color/white</item>
