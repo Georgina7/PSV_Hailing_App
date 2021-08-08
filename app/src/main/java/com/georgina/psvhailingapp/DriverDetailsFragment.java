@@ -80,7 +80,7 @@ public class DriverDetailsFragment extends Fragment {
         });
         status = view.findViewById(R.id.driverAvailability);
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("save",MODE_PRIVATE);
-        status.setChecked(sharedPreferences.getBoolean("value",false));
+        status.setChecked(sharedPreferences.getBoolean("value",true));
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,33 +173,24 @@ public class DriverDetailsFragment extends Fragment {
         }
     }
     private void updateDriverDetails(String user_id){
-
+        String driverStatus = "";
         if (status.isChecked()) {
             status.setChecked(true);
-            String driverStatus = "active";
-            String licence_number = mLicenceNo.getEditText().getText().toString();
-            String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
-            String routes = mRoutes.getEditText().getText().toString();
-            int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
-
-            firebaseDatabase = FirebaseDatabase.getInstance();
-            DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverStatus);
-            databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
-            databaseReference.setValue(driverDetails);
+            driverStatus = "active";
         }
         else {
             status.setChecked(false);
-            String driverStatus = "Not active";
-            String licence_number = mLicenceNo.getEditText().getText().toString();
-            String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
-            String routes = mRoutes.getEditText().getText().toString();
-            int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
-
-            firebaseDatabase = FirebaseDatabase.getInstance();
-            DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverStatus);
-            databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
-            databaseReference.setValue(driverDetails);
+            driverStatus = "Not active";
         }
+        String licence_number = mLicenceNo.getEditText().getText().toString();
+        String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
+        String routes = mRoutes.getEditText().getText().toString();
+        int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverStatus);
+        databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
+        databaseReference.setValue(driverDetails);
     }
     private void getDriverData() {
 

@@ -4,6 +4,8 @@ public class DriverDetails {
     public String licenceNo,matatuPlate,routes,availability;
     public int seats;
 
+    public DriverDetails(){ }
+
     public DriverDetails(String licenceNo, String matatuPlate, String routes, int seats,String availability) {
         this.licenceNo = licenceNo;
         this.matatuPlate = matatuPlate;
