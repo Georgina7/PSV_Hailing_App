@@ -121,7 +121,7 @@ public class DriverDetailsActivity extends AppCompatActivity {
         Integer seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available);
+        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available, availability);
         databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
         databaseReference.setValue(driverDetails);
     }
