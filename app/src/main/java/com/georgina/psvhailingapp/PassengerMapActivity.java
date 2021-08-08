@@ -119,7 +119,7 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
     public void sendToDriverDetails(View view) {
         Intent driverIntent = new Intent(getApplicationContext(),DriverDetailsActivity.class );
         startActivity(driverIntent);
-        finish();
+//        finish();
     }
     @Override
     public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
