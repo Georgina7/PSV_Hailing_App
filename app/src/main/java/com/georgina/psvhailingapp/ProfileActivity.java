@@ -163,9 +163,9 @@ public class ProfileActivity extends AppCompatActivity {
         return filePath;
     }
 
-    public void editContact(View view) {
-        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-        intent.putExtra("UserId", firebaseUser.getUid());
-        startActivity(intent);
-    }
+//    public void editContact(View view) {
+//        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+//        intent.putExtra("UserId", firebaseUser.getUid());
+//        startActivity(intent);
+//    }
 }

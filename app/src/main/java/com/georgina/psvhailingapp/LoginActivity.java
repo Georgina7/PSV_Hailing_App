@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
         if(mCurrentUser != null && loggedInUserId.isEmpty()){
             checkIfUserIsDriver();
         }else{
-            Toast.makeText(getApplicationContext(), loggedInUserId, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), loggedInUserId, Toast.LENGTH_SHORT).show();
         }
     }
 
