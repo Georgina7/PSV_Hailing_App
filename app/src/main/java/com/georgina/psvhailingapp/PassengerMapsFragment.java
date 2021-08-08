@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +24,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -73,7 +73,7 @@ public class PassengerMapsFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference driverDatabaseReference;
     private DatabaseReference user_driverDatabaseReference;
-    private RecyclerView recyclerView;
+    private RecyclerView routesRecyclerView;
     private DriverRouteAdapter adapter;
     private ArrayList<DriverDetails> list;
 
@@ -114,16 +114,12 @@ public class PassengerMapsFragment extends Fragment {
         //driver_id = "lWzaj102lsZEupT5WERAQS3GmUB2";
         firebaseDatabase = FirebaseDatabase.getInstance();
         driverDatabaseReference = firebaseDatabase.getReference("Users").child("Driver");
-        recyclerView = view.findViewById(R.id.recycler_routes);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        FirebaseRecyclerOptions<DriverDetails> options = new
-                FirebaseRecyclerOptions.Builder<DriverDetails>()
-                .setQuery(driverDatabaseReference,DriverDetails.class)
-                .build();
-        adapter = new DriverRouteAdapter(options);
-        adapter.startListening();
-        recyclerView.setAdapter(adapter);
+        routesRecyclerView = view.findViewById(R.id.recycler_routes);
+        routesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        list = new ArrayList<>();
+        adapter = new DriverRouteAdapter(list,getContext());
+        routesRecyclerView.setAdapter(adapter);
+        initializeRouteData();
         mSearch.setVisibility(View.GONE);
         mFrom.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -199,20 +195,26 @@ public class PassengerMapsFragment extends Fragment {
         });
         return view;
     }
+
+    private void initializeRouteData() {
+        list.clear();
+        list.add(new DriverDetails("DL-1234567","KBC 778C","Madaraka",4,"active"));
+        adapter.notifyDataSetChanged();
+        Toast.makeText(getContext(), "Small Change", Toast.LENGTH_SHORT);
+    }
+
     @Override
     public void onStart(){
         super.onStart();
-        adapter.startListening();
         if (mCurrentUser == null){
             Intent intent = new Intent(getContext(),LoginActivity.class);
             startActivity(intent);
         }
     }
-    public void onStop() {
-
-        super.onStop();
-        adapter.stopListening();
-    }
+//    public void onStop() {
+//
+//        super.onStop();
+//    }
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);

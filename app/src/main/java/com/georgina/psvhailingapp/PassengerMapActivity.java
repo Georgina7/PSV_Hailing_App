@@ -92,8 +92,7 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
     public void onStart(){
         super.onStart();
         if (mCurrentUser == null){
-            Intent intent = new Intent(this,LoginActivity.class);
-            startActivity(intent);
+            sendUserToRegister();
         }
     }
 
