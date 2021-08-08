@@ -88,7 +88,7 @@ public class PassengerMapsFragment extends Fragment {
         mHeaderArrow = view.findViewById(R.id.arrow);
         driver_id = "lWzaj102lsZEupT5WERAQS3GmUB2";
         firebaseDatabase = FirebaseDatabase.getInstance();
-        driverDatabaseReference = firebaseDatabase.getReference("Users").child("Driver").child(driver_id);
+        driverDatabaseReference = firebaseDatabase.getReference("Drivers").child(driver_id);
         user_driverDatabaseReference = firebaseDatabase.getReference("Users").child(driver_id);
         getAvailableRoutes();
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.google_map);

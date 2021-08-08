@@ -50,7 +50,7 @@ public class DriverDetailsFragment extends Fragment {
 
         String user_id = mCurrentUser.getUid();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
+        databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
 
         getDriverData();
 
@@ -146,7 +146,7 @@ public class DriverDetailsFragment extends Fragment {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available);
-        databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
+        databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
         databaseReference.setValue(driverDetails);
     }
     private void getDriverData() {

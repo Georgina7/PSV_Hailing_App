@@ -53,8 +53,8 @@ public class SplashActivity extends AppCompatActivity {
     private void checkIfUserIsDriver(){
 
         String user_id = mCurrentUser.getUid();
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users");
-        DatabaseReference driver_idRef = database.child("Driver").child(user_id);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Drivers");
+        DatabaseReference driver_idRef = database.child(user_id);
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

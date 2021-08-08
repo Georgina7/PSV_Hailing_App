@@ -112,7 +112,7 @@ public class DriverDetailsActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available);
-        databaseReference = firebaseDatabase.getReference("Users").child("Driver").child(user_id);
+        databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
         databaseReference.setValue(driverDetails);
     }
     private void sendToDriverMapActivity(){
