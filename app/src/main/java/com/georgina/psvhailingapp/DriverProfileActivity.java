@@ -13,12 +13,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.ImageView;
-
 import android.widget.Toast;
-
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,11 +26,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-
-import java.io.File;
 import java.io.InputStream;
 
-public class ProfileActivity extends AppCompatActivity {
+public class DriverProfileActivity extends AppCompatActivity {
 
     //Initialize variables
     private TextInputLayout mFullName;
@@ -52,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_driver_profile);
 
         selectedImagePath = "";
 
@@ -105,13 +100,10 @@ public class ProfileActivity extends AppCompatActivity {
                             mFullName.getEditText().setText(user.getFullName());
                             mEmail.getEditText().setText(user.getEmail());
                             mContact.getEditText().setText(user.getNumber());
-                            File imgFile = new  File(user.getProfileImagePath());
-                            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                            mProfilePicture.setImageBitmap(myBitmap);
-                            mProfilePicture.setVisibility(View.VISIBLE);
-//                            if(!user.getProfileImagePath().isEmpty()){
-//
-//                            }
+                            if(!user.getProfileImagePath().isEmpty()){
+                                mProfilePicture.setImageBitmap(BitmapFactory.decodeFile(user.getProfileImagePath()));
+                                mProfilePicture.setVisibility(View.VISIBLE);
+                            }
                         }
 
                     }
@@ -119,7 +111,6 @@ public class ProfileActivity extends AppCompatActivity {
             });
 
         }
-
     }
 
     public void selectImage(View view) {
@@ -150,13 +141,13 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private String getPathFromUri(Uri contentUri){
+    private String getPathFromUri(Uri contentUri) {
         String filePath;
         Cursor cursor = getContentResolver()
                 .query(contentUri, null, null, null, null);
-        if(cursor == null){
+        if (cursor == null) {
             filePath = contentUri.getPath();
-        }else{
+        } else {
             cursor.moveToFirst();
             int index = cursor.getColumnIndex("_data");
             filePath = cursor.getString(index);
@@ -165,10 +156,4 @@ public class ProfileActivity extends AppCompatActivity {
 
         return filePath;
     }
-
-//    public void editContact(View view) {
-//        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-//        intent.putExtra("UserId", firebaseUser.getUid());
-//        startActivity(intent);
-//    }
 }
