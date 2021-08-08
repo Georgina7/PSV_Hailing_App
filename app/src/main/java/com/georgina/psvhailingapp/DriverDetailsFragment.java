@@ -196,7 +196,6 @@ public class DriverDetailsFragment extends Fragment {
             int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
 
             firebaseDatabase = FirebaseDatabase.getInstance();
-            firebaseDatabase = FirebaseDatabase.getInstance();
             DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverStatus);
             databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
             databaseReference.setValue(driverDetails);
