@@ -7,6 +7,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,21 +35,37 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 public class PassengerMapsFragment extends Fragment {
 
+    private static final String TAG = " " ;
+    private static final int RESULT_CANCELED =1 ;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
@@ -76,6 +94,10 @@ public class PassengerMapsFragment extends Fragment {
     private RecyclerView routesRecyclerView;
     private DriverRouteAdapter adapter;
     private ArrayList<DriverDetails> list;
+    DriverDetails driverDetails;
+    private TextView plate;
+    private static int AUTOCOMPLETE_REQUEST_CODE;
+//    private ArrayList<User> driverList;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
@@ -106,10 +128,13 @@ public class PassengerMapsFragment extends Fragment {
         mHeaderLayout = view.findViewById(R.id.header_layout);
         mHeaderArrow = view.findViewById(R.id.arrow);
         mInputLayout = view.findViewById(R.id.input_location);
-
+        plate = view.findViewById(R.id.no_plate);
         mSearch = view.findViewById(R.id.btn_search);
         mFrom = view.findViewById(R.id.from);
         mWhere = view.findViewById(R.id.where_to);
+
+        Places.initialize(getContext(), getString(R.string.google_maps_key));
+        PlacesClient placesClient = Places.createClient(getContext());
 
         //driver_id = "lWzaj102lsZEupT5WERAQS3GmUB2";
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -117,6 +142,7 @@ public class PassengerMapsFragment extends Fragment {
         routesRecyclerView = view.findViewById(R.id.recycler_routes);
         routesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         list = new ArrayList<>();
+//        driverList = new ArrayList<>();
         adapter = new DriverRouteAdapter(list,getContext());
         routesRecyclerView.setAdapter(adapter);
         initializeRouteData();
@@ -126,6 +152,22 @@ public class PassengerMapsFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(v.isFocused()){
                     mSearch.setVisibility(View.VISIBLE);
+                    AUTOCOMPLETE_REQUEST_CODE = 1;
+
+                    // Set the fields to specify which types of place data to
+                    // return after the user has made a selection.
+                    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+                    RectangularBounds bounds = RectangularBounds.newInstance(
+                            new LatLng(-33.880490, 151.184363),
+                            new LatLng(-33.858754, 151.229596));
+                    // Start the autocomplete intent.
+                    Intent intent = new Autocomplete.IntentBuilder(
+                            AutocompleteActivityMode.FULLSCREEN,fields)
+                            .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                            .setLocationBias(bounds)
+                            .setCountries(Arrays.asList("KE"))
+                            .build(getContext());
+                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
                 }
             }
         });
@@ -134,6 +176,22 @@ public class PassengerMapsFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(v.isFocused()){
                     mSearch.setVisibility(View.VISIBLE);
+                    AUTOCOMPLETE_REQUEST_CODE = 1;
+
+                    // Set the fields to specify which types of place data to
+                    // return after the user has made a selection.
+                    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+                    RectangularBounds bounds = RectangularBounds.newInstance(
+                            new LatLng(-33.880490, 151.184363),
+                            new LatLng(-33.858754, 151.229596));
+                    // Start the autocomplete intent.
+                    Intent intent = new Autocomplete.IntentBuilder(
+                            AutocompleteActivityMode.FULLSCREEN,fields)
+                            .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                            .setLocationBias(bounds)
+                            .setCountries(Arrays.asList("KE"))
+                            .build(getActivity());
+                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
                 }
             }
         });
@@ -155,8 +213,8 @@ public class PassengerMapsFragment extends Fragment {
 //        });
 
 //        getAvailableRoutes();
-        //driverDatabaseReference = firebaseDatabase.getReference("Users").child("Driver").child(driver_id);
-        //user_driverDatabaseReference = firebaseDatabase.getReference("Users").child(driver_id);
+        driverDatabaseReference = firebaseDatabase.getReference("Driver");
+//        user_driverDatabaseReference = firebaseDatabase.getReference("Users");
         //getAvailableRoutes();
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.google_map);
         //Toast toast = Toast.makeText(getContext(),driver_id,Toast.LENGTH_SHORT);
@@ -195,11 +253,83 @@ public class PassengerMapsFragment extends Fragment {
         });
         return view;
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                mFrom.getEditText().setText(place.getName());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void initializeRouteData() {
-        list.clear();
-        list.add(new DriverDetails("DL-1234567","KBC 778C","Madaraka",4,"active"));
-        adapter.notifyDataSetChanged();
+//        driverList.clear();
+//        list.clear();
+//        list.add(new DriverDetails());
+//        driverList.add(new User());
+        driverDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                list.clear();
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+//                    DriverDetails driverDetails = dataSnapshot.getValue(DriverDetails.class);
+//                    list.add(driverDetails);
+//                }
+                driverDetails = snapshot.getValue(DriverDetails.class);
+                plate.setText(driverDetails.getMatatuPlate());
+                list.add(driverDetails);
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+//        driverDatabaseReference.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull @NotNull DataSnapshot snapshot, @Nullable @org.jetbrains.annotations.Nullable String previousChildName) {
+//                DriverDetails driverDetails = snapshot.getValue(DriverDetails.class);
+//                    list.add(driverDetails);
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull @NotNull DataSnapshot snapshot, @Nullable @org.jetbrains.annotations.Nullable String previousChildName) {
+//                DriverDetails driverDetails = snapshot.getValue(DriverDetails.class);
+//                list.add(driverDetails);
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull @NotNull DataSnapshot snapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull @NotNull DataSnapshot snapshot, @Nullable @org.jetbrains.annotations.Nullable String previousChildName) {
+//                DriverDetails driverDetails = snapshot.getValue(DriverDetails.class);
+//                list.add(driverDetails);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//
+//            }
+//        });
+
+//        list.add(new DriverDetails("DL-1234567","KBC 778C","Madaraka",4,"active"));
+      //  adapter.notifyDataSetChanged();
         Toast.makeText(getContext(), "Small Change", Toast.LENGTH_SHORT);
     }
 

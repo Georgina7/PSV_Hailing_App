@@ -22,7 +22,8 @@
         android:requestLegacyExternalStorage="true">
         <activity android:name=".DriverProfileActivity"></activity>
         <activity android:name=".DriverTripDetailsActivity" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,7 +47,8 @@
         <activity android:name=".DriverDetailsActivity" />
         <activity
             android:name=".PassengerMapActivity"
-            android:theme="@style/Theme.PSVHailingApp.NoActionBar" />
+            android:theme="@style/Theme.PSVHailingApp.NoActionBar"
+            android:exported="true"/>
         <activity android:name=".ProfileActivity" />
         <activity android:name=".VerifyCodeActivity" />
         <activity android:name=".SelectTimeandDateActivity" />
