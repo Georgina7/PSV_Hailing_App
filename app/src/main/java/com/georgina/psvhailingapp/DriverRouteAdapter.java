@@ -1,5 +1,10 @@
 package com.georgina.psvhailingapp;
 
+// FirebaseRecyclerAdapter is a class provided by
+// FirebaseUI. it provides functions to bind, adapt and show
+// database contents in a Recycler View
+//
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,20 +14,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
+import com.google.firebase.database.annotations.NotNull;
 
 import java.util.ArrayList;
 
-// FirebaseRecyclerAdapter is a class provided by
-// FirebaseUI. it provides functions to bind, adapt and show
-// database contents in a Recycler View
-//
 public class DriverRouteAdapter extends RecyclerView.Adapter<DriverRouteAdapter.ViewHolder>{
         private ArrayList<DriverDetails> routeData;
+//        private ArrayList<User> driverData;
         private Context myContext;
 
         DriverRouteAdapter(ArrayList<DriverDetails> mRouteData, Context context) {
         this.routeData = mRouteData;
+//        this.driverData = mDriverData;
         this.myContext = context;
 
     }
@@ -37,6 +40,7 @@ public class DriverRouteAdapter extends RecyclerView.Adapter<DriverRouteAdapter.
     @Override
     public void onBindViewHolder(@NonNull @NotNull DriverRouteAdapter.ViewHolder holder, int position) {
         DriverDetails availableRoute = routeData.get(position);
+//        User user = driverData.get(position);
         holder.bindTo(availableRoute);
     }
 
@@ -46,22 +50,25 @@ public class DriverRouteAdapter extends RecyclerView.Adapter<DriverRouteAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView matatuPlate,licenceNo,routes,status,seats;
+        private TextView mPlate,mStart,mDest;
         public ViewHolder(View inflate) {
             super(inflate);
-            matatuPlate= inflate.findViewById(R.id.no_plate);
-            licenceNo = inflate.findViewById(R.id.driver_name);
-            routes = inflate.findViewById(R.id.start_place);
-            status = inflate.findViewById(R.id.destination_place);
-            seats = inflate.findViewById(R.id.driver_number);
+            mPlate= inflate.findViewById(R.id.no_plate);
+//            mDriverName = inflate.findViewById(R.id.driver_name);
+            mStart = inflate.findViewById(R.id.start_place);
+            mDest = inflate.findViewById(R.id.destination_place);
+//            mDriverNumber = inflate.findViewById(R.id.driver_number);
         }
 
         public void bindTo(DriverDetails availableRoute) {
-            matatuPlate.setText(availableRoute.getMatatuPlate());
-            seats.setText("3");
-            licenceNo.setText(availableRoute.getLicenceNo());
-            routes.setText(availableRoute.getRoutes());
-            status.setText(availableRoute.getAvailability());
+
+            mPlate.setText(availableRoute.getMatatuPlate());
+            //mDriverNumber.setText(user.getNumber());
+           // mDriverName.setText(user.getFullName());
+//            mDriverName.setText("Shem Mwanza");
+//            mDriverNumber.setText("+254714921901");
+            mStart.setText(availableRoute.getRoutes());
+            mDest.setText(availableRoute.getRoutes());
         }
     }
 }
