@@ -36,6 +36,8 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private NumberPicker mSeats;
+    private long today;
+    private CalendarConstraints.Builder constraintBuilder;
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +55,10 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         //Calendar for Date Picker
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(getString(R.string.utc)));
         calendar.clear();
-        long today = MaterialDatePicker.todayInUtcMilliseconds();
+        today = MaterialDatePicker.todayInUtcMilliseconds();
         calendar.setTimeInMillis(today);
         //Constraints for calendar
-        CalendarConstraints.Builder constraintBuilder = new CalendarConstraints.Builder();
+        constraintBuilder = new CalendarConstraints.Builder();
         constraintBuilder.setValidator(DateValidatorPointForward.now());
         MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
 
@@ -71,9 +73,57 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         );
 
         //Date Picker
+        onClickDate();
         final int[] hour = new int[1];
         int minute = 0;
         //Showing the Date Picker
+        mDate.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(view.isFocused()){
+                    MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+                    builder.setTitleText(R.string.select_date);
+                    builder.setSelection(today);
+                    builder.setCalendarConstraints(constraintBuilder.build());
+                    MaterialDatePicker materialDatePicker = builder.build();
+                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+                    materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
+                        @Override
+                        public void onPositiveButtonClick(Object selection) {
+                            mDate.getEditText().setText(materialDatePicker.getHeaderText());
+                        }
+                    });
+                }
+            }
+        });
+
+        //Showing Time Picker
+        onClickTime();
+        mTime.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View timeView, boolean b) {
+                if(timeView.isFocused()){
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(SelectTimeandDateActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        hour[0] = hourOfDay;
+                        minute = minute;
+
+                        Calendar calendar1 = Calendar.getInstance();
+                        //setting hour and minute
+                        calendar1.set(0,0,0, hour[0],minute);
+                        mTime.getEditText().setText(DateFormat.format(getString(R.string.date_format),calendar1));
+                    }
+                },12,0,false);
+                //Show the previous selected time
+                timePickerDialog.updateTime(hour[0],minute);
+                timePickerDialog.show();
+                }
+            }
+        });
+    }
+
+    private void onClickDate() {
         mDate.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,9 +141,12 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
                 });
             }
         });
+    }
 
-        //Showing Time Picker
+    private void onClickTime() {
         mTime.getEditText().setOnClickListener(new View.OnClickListener() {
+            final int[] hour = new int[1];
+            int minute = 0;
             @Override
             public void onClick(View v) {
                 TimePickerDialog timePickerDialog = new TimePickerDialog(SelectTimeandDateActivity.this, new TimePickerDialog.OnTimeSetListener() {
@@ -114,6 +167,7 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public void onStart(){
         super.onStart();
