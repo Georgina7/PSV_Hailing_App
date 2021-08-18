@@ -168,7 +168,7 @@ public class PassengerMapsFragment extends Fragment {
                     // Start the autocomplete intent.
                     Intent intent = new Autocomplete.IntentBuilder(
                             AutocompleteActivityMode.FULLSCREEN,fields)
-                            .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                            .setTypeFilter(TypeFilter.GEOCODE)
                             .setLocationBias(bounds)
                             .setCountries(Arrays.asList("KE"))
                             .build(getContext());
