@@ -19,13 +19,11 @@ import com.google.firebase.database.annotations.NotNull;
 import java.util.ArrayList;
 
 public class DriverRouteAdapter extends RecyclerView.Adapter<DriverRouteAdapter.ViewHolder>{
-        private ArrayList<DriverDetails> routeData;
-//        private ArrayList<User> driverData;
+        private ArrayList<String> routeData;
         private Context myContext;
 
-        DriverRouteAdapter(ArrayList<DriverDetails> mRouteData, Context context) {
+        DriverRouteAdapter(ArrayList<String> mRouteData, Context context) {
         this.routeData = mRouteData;
-//        this.driverData = mDriverData;
         this.myContext = context;
 
     }
@@ -39,8 +37,7 @@ public class DriverRouteAdapter extends RecyclerView.Adapter<DriverRouteAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull DriverRouteAdapter.ViewHolder holder, int position) {
-        DriverDetails availableRoute = routeData.get(position);
-//        User user = driverData.get(position);
+        String availableRoute = routeData.get(position);
         holder.bindTo(availableRoute);
     }
 
@@ -50,25 +47,19 @@ public class DriverRouteAdapter extends RecyclerView.Adapter<DriverRouteAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView mPlate,mStart,mDest;
+
+        private TextView mStart,mDest;
+
         public ViewHolder(View inflate) {
             super(inflate);
-            mPlate= inflate.findViewById(R.id.no_plate);
-//            mDriverName = inflate.findViewById(R.id.driver_name);
             mStart = inflate.findViewById(R.id.start_place);
             mDest = inflate.findViewById(R.id.destination_place);
-//            mDriverNumber = inflate.findViewById(R.id.driver_number);
         }
 
-        public void bindTo(DriverDetails availableRoute) {
-
-            mPlate.setText(availableRoute.getMatatuPlate());
-            //mDriverNumber.setText(user.getNumber());
-           // mDriverName.setText(user.getFullName());
-//            mDriverName.setText("Shem Mwanza");
-//            mDriverNumber.setText("+254714921901");
-            mStart.setText(availableRoute.getRoutes());
-            mDest.setText(availableRoute.getRoutes());
+        public void bindTo(String availableRoute) {
+            String [] locations = availableRoute.split("-");
+            mStart.setText(locations[0]);
+            mDest.setText(locations[1]);
         }
     }
 }

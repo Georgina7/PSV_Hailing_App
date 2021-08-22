@@ -5,11 +5,14 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -20,10 +23,17 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.TimeZone;
 
 public class SelectTimeandDateActivity extends AppCompatActivity {
@@ -36,6 +46,7 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private NumberPicker mSeats;
+    private String driverID;
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +140,7 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         }
         else{
             addBookingDetails();
-            Toast.makeText(SelectTimeandDateActivity.this,"Data has been added",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SelectTimeandDateActivity.this,"Data has been added",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -137,19 +148,96 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         Intent i = getIntent();
         String source = i.getStringExtra(PassengerMapsFragment.EXTRA_SOURCE);
         String dest = i.getStringExtra(PassengerMapsFragment.EXTRA_DEST);
-        String pwd_id = mCurrentUser.getUid();
-        String driver_id = "njkcsdicn";
-        String status = "pending";
-        int seat = mSeats.getValue();
-        String date = mDate.getEditText().getText().toString();
-        String time = mTime.getEditText().getText().toString();
-        String info = mInfo.getEditText().getText().toString();
+        checkForRoute(source, dest);
+        String driver_id = getDriverID();
+//        if(driver_id.isEmpty()){
+//            Toast.makeText(getApplicationContext(), "No Driver", Toast.LENGTH_SHORT).show();
+//        }else
+//        {
+//            Toast.makeText(getApplicationContext(), getDriverID(), Toast.LENGTH_SHORT).show();
+//        }
+//        if(getDriverID().isEmpty()){
+//            Toast.makeText(getApplicationContext(), "No driver registered on this route", Toast.LENGTH_LONG).show();
+//        }else{
+//            String pwd_id = mCurrentUser.getUid();
+//            String driver_id = getDriverID();
+//            String status = "pending";
+//            int seat = mSeats.getValue();
+//            String date = mDate.getEditText().getText().toString();
+//            String time = mTime.getEditText().getText().toString();
+//            String info = mInfo.getEditText().getText().toString();
+//
+//            firebaseDatabase = FirebaseDatabase.getInstance();
+//            Trip trip = new Trip(pwd_id,driver_id,source,dest,date,time,info,status,seat);
+//            databaseReference = firebaseDatabase.getReference("Trips");
+//            String key = databaseReference.push().getKey();
+//            databaseReference.child(key).setValue(trip);
+//
+//        }
 
+    }
+
+    private void checkForRoute(String source, String dest) {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        Trip trip = new Trip(pwd_id,driver_id,source,dest,date,time,info,status,seat);
-        databaseReference = firebaseDatabase.getReference("Trips");
-        String key = databaseReference.push().getKey();
-        databaseReference.child(key).setValue(trip);
+        databaseReference = firebaseDatabase.getReference("Routes");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                Iterator<DataSnapshot> routes = snapshot.getChildren().iterator();
+                //Toast.makeText(getApplicationContext(), "Total Routes: " + snapshot.getChildrenCount(),Toast.LENGTH_SHORT).show();
+                String route_key = "";
+                while (routes.hasNext()){
+                    DataSnapshot route = routes.next();
+                    if(route.hasChild(source) && route.hasChild(dest)){
+                        route_key = route.getKey();
+                    }
+                }
+                if(!route_key.isEmpty()){
+                    checkForDriver(route_key);
+                }else{
+                    Toast.makeText(getApplicationContext(), "No driver registered on this route", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void checkForDriver(String route_key) {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Drivers");
+        String finalRoute_key = route_key;
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                Iterator<DataSnapshot> drivers = snapshot.getChildren().iterator();
+                while (drivers.hasNext()){
+                    DataSnapshot driver = drivers.next();
+                    if(driver.child("routes").getValue().equals(finalRoute_key)){
+                        setDriverID(driver.getKey());
+                        Log.d("Driver", driver.getValue().toString());
+                    }else{
+                        Log.d("Other", finalRoute_key);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public String getDriverID() {
+        return driverID;
+    }
+
+    public void setDriverID(String driverID) {
+        this.driverID = driverID;
     }
 
     //Validation of Input Fields
