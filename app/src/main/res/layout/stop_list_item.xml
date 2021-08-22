@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_4sdp">
+    <TextView
+        android:id="@+id/stop_point"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Central Court"
+        android:fontFamily="@font/open_sans_regular"
+        android:padding="@dimen/_15sdp"/>
+
+</androidx.cardview.widget.CardView>

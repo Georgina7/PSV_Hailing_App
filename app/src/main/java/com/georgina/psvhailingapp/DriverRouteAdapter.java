@@ -6,6 +6,7 @@ package com.georgina.psvhailingapp;
 //
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,10 +51,22 @@ public class DriverRouteAdapter extends RecyclerView.Adapter<DriverRouteAdapter.
 
         private TextView mStart,mDest;
 
-        public ViewHolder(View inflate) {
-            super(inflate);
-            mStart = inflate.findViewById(R.id.start_place);
-            mDest = inflate.findViewById(R.id.destination_place);
+        public ViewHolder(View itemView) {
+            super(itemView);
+            mStart = itemView.findViewById(R.id.start_place);
+            mDest = itemView.findViewById(R.id.destination_place);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int routePosition = getAdapterPosition();
+                    String currentRoute = routeData.get(routePosition);
+                    Intent intent = new Intent(myContext, SelectPickupActivity.class);
+                    intent.putExtra("Route", currentRoute);
+                    myContext.startActivity(intent);
+                }
+            });
+
         }
 
         public void bindTo(String availableRoute) {

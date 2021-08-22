@@ -5,10 +5,13 @@
       <map>
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_passenger_map.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_select_dropoff.xml" value="0.17239583333333333" />
+        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_select_pickup.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_select_timeand_date.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/available_routes_bottom_sheet.xml" value="0.17239583333333333" />
+        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/booking_list_item.xml" value="0.5" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/fragment_passenger_maps.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/routes_list.xml" value="0.33" />
+        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/stop_list_item.xml" value="0.33" />
       </map>
     </option>
   </component>

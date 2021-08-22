@@ -274,7 +274,6 @@ public class PassengerMapsFragment extends Fragment {
                 Log.i(TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
-
             }
             return;
         }
@@ -291,16 +290,8 @@ public class PassengerMapsFragment extends Fragment {
                     DataSnapshot route = routes.next();
                     routesList.add(route.child("routes").getValue().toString());
                 }
+                adapter.notifyDataSetChanged();
 
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-//                    DriverDetails driverDetails = dataSnapshot.getValue(DriverDetails.class);
-//                    list.add(driverDetails);
-//                }
-//                driverDetails = snapshot.getValue(DriverDetails.class);
-//                plate.setText(driverDetails.getMatatuPlate());
-//                list.add(driverDetails);
-//
-//                adapter.notifyDataSetChanged();
             }
 
             @Override
