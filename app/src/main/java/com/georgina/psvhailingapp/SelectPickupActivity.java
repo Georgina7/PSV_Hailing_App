@@ -86,4 +86,11 @@ public class SelectPickupActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void Next(View view) {
+        Intent intent = new Intent(SelectPickupActivity.this, SelectDropoffActivity.class);
+        intent.putExtra("Route", route);
+        //intent.putExtra("")
+        startActivity(intent);
+    }
 }
