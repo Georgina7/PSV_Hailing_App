@@ -125,7 +125,7 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
     public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.map:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new DriverMapsFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new PassengerMapsFragment()).commit();
                 break;
         }
         mDrawer.closeDrawer(GravityCompat.START);

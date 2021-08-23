@@ -67,6 +67,9 @@ public class PassengerMapsFragment extends Fragment {
 
     private static final String TAG = " " ;
     private static final int RESULT_CANCELED =1 ;
+    private static final int RESULT_CANCELED1 =2 ;
+    private static final int RESULT_OK1 =1 ;
+
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
@@ -157,7 +160,7 @@ public class PassengerMapsFragment extends Fragment {
                     // Start the autocomplete intent.
                     Intent intent = new Autocomplete.IntentBuilder(
                             AutocompleteActivityMode.FULLSCREEN,fields)
-                            .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                            .setTypeFilter(TypeFilter.GEOCODE)
                             .setLocationBias(bounds)
                             .setCountries(Arrays.asList("KE"))
                             .build(getContext());
@@ -170,6 +173,7 @@ public class PassengerMapsFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(v.isFocused()){
                     mSearch.setVisibility(View.VISIBLE);
+
                     AUTOCOMPLETE_REQUEST_CODE_WHERE = 2;
 
                     // Set the fields to specify which types of place data to
@@ -185,7 +189,9 @@ public class PassengerMapsFragment extends Fragment {
                             .setLocationBias(bounds)
                             .setCountries(Arrays.asList("KE"))
                             .build(getActivity());
+
                     startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE_WHERE);
+
                 }
             }
         });
@@ -277,7 +283,11 @@ public class PassengerMapsFragment extends Fragment {
             }
             return;
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        else {
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            mWhere.getEditText().setText(place.getName());
+        }
     }
 
     private void initializeRouteData() {
@@ -330,7 +340,7 @@ public class PassengerMapsFragment extends Fragment {
 //        });
 
 //        list.add(new DriverDetails("DL-1234567","KBC 778C","Madaraka",4,"active"));
-      //  adapter.notifyDataSetChanged();
+        //  adapter.notifyDataSetChanged();
         Toast.makeText(getContext(), "Small Change", Toast.LENGTH_SHORT);
     }
 
@@ -342,7 +352,7 @@ public class PassengerMapsFragment extends Fragment {
             startActivity(intent);
         }
     }
-//    public void onStop() {
+    //    public void onStop() {
 //
 //        super.onStop();
 //    }
