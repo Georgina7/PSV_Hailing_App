@@ -34,7 +34,7 @@ public class SelectDropoffActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseDatabase firebaseDatabase;
 
-    private String route;
+    private String route, pickUp;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -58,6 +58,7 @@ public class SelectDropoffActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("Routes");
 
         route = getIntent().getStringExtra("Route");
+        pickUp = getIntent().getStringExtra("PickUp");
 
         stopsRecyclerView = findViewById(R.id.recycler_dropoff_stops);
         stopsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -66,7 +67,7 @@ public class SelectDropoffActivity extends AppCompatActivity {
         stopsRecyclerView.setAdapter(stopsAdapter);
         initializeStopsData();
 
-        Toast.makeText(getApplicationContext(), getIntent().getStringExtra("Route"), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), getIntent().getStringExtra("Route"), Toast.LENGTH_SHORT).show();
     }
 
     private void initializeStopsData() {
@@ -91,6 +92,9 @@ public class SelectDropoffActivity extends AppCompatActivity {
 
     public void Next(View view) {
         Intent intent = new Intent(SelectDropoffActivity.this, SelectTimeandDateActivity.class);
+        intent.putExtra("Source", pickUp);
+        intent.putExtra("Destination", stopsAdapter.getSelected());
+        intent.putExtra("Activity", "SelectDropOff");
         startActivity(intent);
     }
 }

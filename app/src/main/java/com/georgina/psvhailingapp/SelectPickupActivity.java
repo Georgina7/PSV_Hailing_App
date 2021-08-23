@@ -64,7 +64,7 @@ public class SelectPickupActivity extends AppCompatActivity {
         stopsRecyclerView.setAdapter(stopsAdapter);
         initializeStopsData();
 
-        Toast.makeText(getApplicationContext(), getIntent().getStringExtra("Route"), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), getIntent().getStringExtra("Route"), Toast.LENGTH_SHORT).show();
     }
 
     private void initializeStopsData() {
@@ -90,7 +90,7 @@ public class SelectPickupActivity extends AppCompatActivity {
     public void Next(View view) {
         Intent intent = new Intent(SelectPickupActivity.this, SelectDropoffActivity.class);
         intent.putExtra("Route", route);
-        //intent.putExtra("")
+        intent.putExtra("PickUp", stopsAdapter.getSelected());
         startActivity(intent);
     }
 }

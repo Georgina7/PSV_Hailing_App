@@ -201,10 +201,19 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
 
     private void addBookingDetails() {
         Intent i = getIntent();
-        String source = i.getStringExtra(PassengerMapsFragment.EXTRA_SOURCE);
-        String dest = i.getStringExtra(PassengerMapsFragment.EXTRA_DEST);
+        String source, dest, activity;
+        activity = i.getStringExtra("Activity");
+        if(activity.equals("SelectDropOff")){
+            source = i.getStringExtra("Source");
+            dest = i.getStringExtra("Destination");
+        }else{
+            source = i.getStringExtra(PassengerMapsFragment.EXTRA_SOURCE);
+            dest = i.getStringExtra(PassengerMapsFragment.EXTRA_DEST);
+        }
+
+        //Toast.makeText(getApplicationContext(), source + " - " + dest , Toast.LENGTH_SHORT).show();
         checkForRoute(source, dest);
-        String driver_id = getDriverID();
+        //String driver_id = getDriverID();
 //        if(driver_id.isEmpty()){
 //            Toast.makeText(getApplicationContext(), "No Driver", Toast.LENGTH_SHORT).show();
 //        }else

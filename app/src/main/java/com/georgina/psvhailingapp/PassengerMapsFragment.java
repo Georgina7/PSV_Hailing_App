@@ -416,6 +416,7 @@ public class PassengerMapsFragment extends Fragment {
                                         Intent bookingIntent = new Intent(getContext(),SelectTimeandDateActivity.class);
                                         bookingIntent.putExtra(EXTRA_SOURCE,source);
                                         bookingIntent.putExtra(EXTRA_DEST,destination);
+                                        bookingIntent.putExtra("Activity", "PassengerMap");
                                         startActivity(bookingIntent);
                                     }
                                 }
