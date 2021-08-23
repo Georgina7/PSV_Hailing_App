@@ -58,6 +58,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -74,18 +75,13 @@ public class PassengerMapsFragment extends Fragment {
     FusedLocationProviderClient client;
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
-    //private String driver_id;
-    private TextView mMatatuPlate;
     private Button mSearch;
     private TextInputLayout mFrom;
     private TextInputLayout mWhere;
     public static String EXTRA_SOURCE = "source";
     public static String EXTRA_DEST = "dest";
-
-    //    private TextView mDriverNumber;
-//    private TextView mStart;
 //    private TextView mDestination;
-//    private TextView mDriverName;
+//    private TextView mStart;
     private ImageView mHeaderArrow;
     private ConstraintLayout mRoutesBottomSheet;
     private LinearLayout mHeaderLayout;
@@ -96,13 +92,9 @@ public class PassengerMapsFragment extends Fragment {
     private DatabaseReference user_driverDatabaseReference;
     private RecyclerView routesRecyclerView;
     private DriverRouteAdapter adapter;
-    private ArrayList<DriverDetails> list;
-    DriverDetails driverDetails;
-    private TextView plate;
-    private static int AUTOCOMPLETE_REQUEST_CODE;
-    private static int AUTOCOMPLETE_REQUEST_COD;
-
-//    private ArrayList<User> driverList;
+    private ArrayList<String> routesList;
+    private static int AUTOCOMPLETE_REQUEST_CODE_FROM;
+    private static int AUTOCOMPLETE_REQUEST_CODE_WHERE;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
@@ -122,18 +114,18 @@ public class PassengerMapsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_passenger_maps, container, false);
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
-        mMatatuPlate = view.findViewById(R.id.no_plate);
-//        mDriverNumber = view.findViewById(R.id.driver_number);
+
+
 //        mStart = view.findViewById(R.id.Start);
 //        mDestination = view.findViewById(R.id.destination);
-//        mDriverName = view.findViewById(R.id.driver_name);
+
         mRoutesBottomSheet = view.findViewById(R.id.available_routes_bottom_sheet);
         mBottomSheetBehavior = BottomSheetBehavior.from(mRoutesBottomSheet);
         mBottomSheetBehavior.setHideable(false);
         mHeaderLayout = view.findViewById(R.id.header_layout);
         mHeaderArrow = view.findViewById(R.id.arrow);
         mInputLayout = view.findViewById(R.id.input_location);
-        plate = view.findViewById(R.id.no_plate);
+//        plate = view.findViewById(R.id.no_plate);
         mSearch = view.findViewById(R.id.btn_search);
         mFrom = view.findViewById(R.id.from);
         mWhere = view.findViewById(R.id.where_to);
@@ -141,23 +133,23 @@ public class PassengerMapsFragment extends Fragment {
         Places.initialize(getContext(), getString(R.string.google_maps_key));
         PlacesClient placesClient = Places.createClient(getContext());
 
-        //driver_id = "lWzaj102lsZEupT5WERAQS3GmUB2";
         firebaseDatabase = FirebaseDatabase.getInstance();
         driverDatabaseReference = firebaseDatabase.getReference("Drivers");
+
         routesRecyclerView = view.findViewById(R.id.recycler_routes);
         routesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        list = new ArrayList<>();
-//        driverList = new ArrayList<>();
-        adapter = new DriverRouteAdapter(list,getContext());
+        routesList = new ArrayList<>();
+        adapter = new DriverRouteAdapter(routesList,getContext());
         routesRecyclerView.setAdapter(adapter);
         initializeRouteData();
+
         mSearch.setVisibility(View.GONE);
         mFrom.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(v.isFocused()){
                     mSearch.setVisibility(View.VISIBLE);
-                    AUTOCOMPLETE_REQUEST_CODE = 1;
+                    AUTOCOMPLETE_REQUEST_CODE_FROM = 1;
 
                     // Set the fields to specify which types of place data to
                     // return after the user has made a selection.
@@ -172,7 +164,7 @@ public class PassengerMapsFragment extends Fragment {
                             .setLocationBias(bounds)
                             .setCountries(Arrays.asList("KE"))
                             .build(getContext());
-                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE_FROM);
                 }
             }
         });
@@ -181,7 +173,8 @@ public class PassengerMapsFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(v.isFocused()){
                     mSearch.setVisibility(View.VISIBLE);
-                    AUTOCOMPLETE_REQUEST_COD = 2;
+
+                    AUTOCOMPLETE_REQUEST_CODE_WHERE = 2;
 
                     // Set the fields to specify which types of place data to
                     // return after the user has made a selection.
@@ -196,7 +189,9 @@ public class PassengerMapsFragment extends Fragment {
                             .setLocationBias(bounds)
                             .setCountries(Arrays.asList("KE"))
                             .build(getActivity());
-                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_COD);
+
+                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE_WHERE);
+
                 }
             }
         });
@@ -218,7 +213,7 @@ public class PassengerMapsFragment extends Fragment {
 //        });
 
 //        getAvailableRoutes();
-        driverDatabaseReference = firebaseDatabase.getReference("Driver");
+        driverDatabaseReference = firebaseDatabase.getReference("Drivers");
 //        user_driverDatabaseReference = firebaseDatabase.getReference("Users");
         //getAvailableRoutes();
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.google_map);
@@ -260,7 +255,7 @@ public class PassengerMapsFragment extends Fragment {
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE_FROM) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
@@ -274,6 +269,19 @@ public class PassengerMapsFragment extends Fragment {
 
             }
             return;
+        }else if(requestCode == AUTOCOMPLETE_REQUEST_CODE_WHERE){
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                mWhere.getEditText().setText(place.getName());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+            return;
         }
         else {
             Place place = Autocomplete.getPlaceFromIntent(data);
@@ -283,23 +291,17 @@ public class PassengerMapsFragment extends Fragment {
     }
 
     private void initializeRouteData() {
-//        driverList.clear();
-//        list.clear();
-//        list.add(new DriverDetails());
-//        driverList.add(new User());
         driverDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                list.clear();
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-//                    DriverDetails driverDetails = dataSnapshot.getValue(DriverDetails.class);
-//                    list.add(driverDetails);
-//                }
-                driverDetails = snapshot.getValue(DriverDetails.class);
-                plate.setText(driverDetails.getMatatuPlate());
-                list.add(driverDetails);
-
+                routesList.clear();
+                Iterator<DataSnapshot> routes = snapshot.getChildren().iterator();
+                while (routes.hasNext()){
+                    DataSnapshot route = routes.next();
+                    routesList.add(route.child("routes").getValue().toString());
+                }
                 adapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -424,6 +426,7 @@ public class PassengerMapsFragment extends Fragment {
             });
         }
     }
+
     private boolean validateSource(){
         String routes = mFrom.getEditText().getText().toString().trim();
         if(routes.isEmpty()){
@@ -436,6 +439,7 @@ public class PassengerMapsFragment extends Fragment {
         }
 
     }
+
     private boolean validateDestination(){
         String routes =  mWhere.getEditText().getText().toString().trim();
         if(routes.isEmpty()){
@@ -458,6 +462,7 @@ public class PassengerMapsFragment extends Fragment {
             }
         }
     }
+
 //    private void getAvailableRoutes(){
 //       driverDatabaseReference.addValueEventListener(new ValueEventListener() {
 //           @Override

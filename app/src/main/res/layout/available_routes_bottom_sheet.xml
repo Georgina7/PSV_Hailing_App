@@ -43,7 +43,6 @@
         </com.google.android.material.textfield.TextInputLayout>
         <Button
             android:id="@+id/btn_search"
-            android:onClick="search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:height="@dimen/_48sdp"

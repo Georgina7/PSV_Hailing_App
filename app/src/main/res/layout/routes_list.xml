@@ -16,9 +16,9 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/_84sdp"
-                android:paddingTop="@dimen/_16sdp"
-                android:paddingBottom="@dimen/_16sdp"
+                android:layout_height="@dimen/_75sdp"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_12sdp"
                 android:src="@drawable/ic_start_dest" />
 
             <LinearLayout
@@ -39,50 +39,50 @@
                     android:id="@+id/destination_place"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:fontFamily="@font/open_sans_regular"
                     android:text="@string/cbd" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingTop="@dimen/_16sdp"
-                android:paddingBottom="@dimen/_16sdp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                android:paddingTop="@dimen/_16sdp"-->
+<!--                android:paddingBottom="@dimen/_16sdp">-->
 
-                <View
-                    android:layout_width="@dimen/_2sdp"
-                    android:layout_height="match_parent"
-                    android:background="@color/pwd_color_accent" />
-            </LinearLayout>
+<!--                <View-->
+<!--                    android:layout_width="@dimen/_2sdp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:background="@color/pwd_color_accent" />-->
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="@dimen/_16sdp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                android:padding="@dimen/_16sdp">-->
 
-                <TextView
-                    android:id="@+id/driver_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/georgina_nyokabi" />
+<!--                <TextView-->
+<!--                    android:id="@+id/driver_name"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/georgina_nyokabi" />-->
 
-                <TextView
-                    android:id="@+id/driver_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:text="@string/_25471234567" />
+<!--                <TextView-->
+<!--                    android:id="@+id/driver_number"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="@dimen/_4sdp"-->
+<!--                    android:text="@string/_25471234567" />-->
 
-                <TextView
-                    android:id="@+id/no_plate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:text="@string/kbc_778c" />
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/no_plate"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="@dimen/_4sdp"-->
+<!--                    android:text="@string/kbc_778c" />-->
+<!--            </LinearLayout>-->
 
 
         </LinearLayout>
