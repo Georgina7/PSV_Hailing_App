@@ -1,8 +1,10 @@
 package com.georgina.psvhailingapp;
 
 public class Trip {
-    private String pwdID, driverID, source, destination, date, time, shortMessage, status;
+    private String tripID, pwdID, driverID, source, destination, date, time, shortMessage, status;
     private int seat;
+
+    Trip(){};
 
     Trip(String pwdID, String driverID, String source, String destination, String date, String time, String shortMessage, String status, int seat){
         this.pwdID = pwdID;
@@ -14,6 +16,14 @@ public class Trip {
         this.shortMessage = shortMessage;
         this.status = status;
         this.seat = seat;
+    }
+
+    public String getTripID() {
+        return tripID;
+    }
+
+    public void setTripID(String tripID) {
+        this.tripID = tripID;
     }
 
     public String getPwdID() {

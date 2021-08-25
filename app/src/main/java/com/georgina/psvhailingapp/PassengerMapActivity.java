@@ -127,6 +127,9 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
             case R.id.map:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new PassengerMapsFragment()).commit();
                 break;
+            case R.id.trip_reports:
+                Intent intent = new Intent(PassengerMapActivity.this, PWDTripReportsActivity.class);
+                startActivity(intent);
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
