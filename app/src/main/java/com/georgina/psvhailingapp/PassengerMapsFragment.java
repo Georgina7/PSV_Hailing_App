@@ -1,12 +1,17 @@
 package com.georgina.psvhailingapp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,19 +26,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -65,10 +80,10 @@ import static android.app.Activity.RESULT_OK;
 
 public class PassengerMapsFragment extends Fragment {
 
-    private static final String TAG = " " ;
-    private static final int RESULT_CANCELED =1 ;
-    private static final int RESULT_CANCELED1 =2 ;
-    private static final int RESULT_OK1 =1 ;
+    private static final String TAG = " ";
+    private static final int RESULT_CANCELED = 1;
+    private static final int RESULT_CANCELED1 = 2;
+    private static final int RESULT_OK1 = 1;
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -80,7 +95,7 @@ public class PassengerMapsFragment extends Fragment {
     private TextInputLayout mWhere;
     public static String EXTRA_SOURCE = "source";
     public static String EXTRA_DEST = "dest";
-//    private TextView mDestination;
+    //    private TextView mDestination;
 //    private TextView mStart;
     private ImageView mHeaderArrow;
     private ConstraintLayout mRoutesBottomSheet;
@@ -88,13 +103,15 @@ public class PassengerMapsFragment extends Fragment {
     private LinearLayout mInputLayout;
     private BottomSheetBehavior mBottomSheetBehavior;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference driverDatabaseReference;
+    private DatabaseReference driverDatabaseReference, locationDatabaseReference;
     private DatabaseReference user_driverDatabaseReference;
     private RecyclerView routesRecyclerView;
     private DriverRouteAdapter adapter;
     private ArrayList<String> routesList;
     private static int AUTOCOMPLETE_REQUEST_CODE_FROM;
     private static int AUTOCOMPLETE_REQUEST_CODE_WHERE;
+
+
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
@@ -106,6 +123,7 @@ public class PassengerMapsFragment extends Fragment {
             mMap.setMyLocationEnabled(true);
         }
     };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -114,32 +132,32 @@ public class PassengerMapsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_passenger_maps, container, false);
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
-
-
-//        mStart = view.findViewById(R.id.Start);
-//        mDestination = view.findViewById(R.id.destination);
-
         mRoutesBottomSheet = view.findViewById(R.id.available_routes_bottom_sheet);
         mBottomSheetBehavior = BottomSheetBehavior.from(mRoutesBottomSheet);
         mBottomSheetBehavior.setHideable(false);
         mHeaderLayout = view.findViewById(R.id.header_layout);
         mHeaderArrow = view.findViewById(R.id.arrow);
         mInputLayout = view.findViewById(R.id.input_location);
-//        plate = view.findViewById(R.id.no_plate);
         mSearch = view.findViewById(R.id.btn_search);
         mFrom = view.findViewById(R.id.from);
         mWhere = view.findViewById(R.id.where_to);
+
+        client = LocationServices.getFusedLocationProviderClient(getContext());
+        getCurrentLocation();
+
+
 
         Places.initialize(getContext(), getString(R.string.google_maps_key));
         PlacesClient placesClient = Places.createClient(getContext());
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         driverDatabaseReference = firebaseDatabase.getReference("Drivers");
+        locationDatabaseReference = firebaseDatabase.getReference("Locations");
 
         routesRecyclerView = view.findViewById(R.id.recycler_routes);
         routesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         routesList = new ArrayList<>();
-        adapter = new DriverRouteAdapter(routesList,getContext());
+        adapter = new DriverRouteAdapter(routesList, getContext());
         routesRecyclerView.setAdapter(adapter);
         initializeRouteData();
 
@@ -147,7 +165,7 @@ public class PassengerMapsFragment extends Fragment {
         mFrom.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(v.isFocused()){
+                if (v.isFocused()) {
                     mSearch.setVisibility(View.VISIBLE);
                     AUTOCOMPLETE_REQUEST_CODE_FROM = 1;
 
@@ -159,7 +177,7 @@ public class PassengerMapsFragment extends Fragment {
                             new LatLng(-33.858754, 151.229596));
                     // Start the autocomplete intent.
                     Intent intent = new Autocomplete.IntentBuilder(
-                            AutocompleteActivityMode.FULLSCREEN,fields)
+                            AutocompleteActivityMode.FULLSCREEN, fields)
                             .setTypeFilter(TypeFilter.GEOCODE)
                             .setLocationBias(bounds)
                             .setCountries(Arrays.asList("KE"))
@@ -171,7 +189,7 @@ public class PassengerMapsFragment extends Fragment {
         mWhere.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(v.isFocused()){
+                if (v.isFocused()) {
                     mSearch.setVisibility(View.VISIBLE);
 
                     AUTOCOMPLETE_REQUEST_CODE_WHERE = 2;
@@ -184,7 +202,7 @@ public class PassengerMapsFragment extends Fragment {
                             new LatLng(-33.858754, 151.229596));
                     // Start the autocomplete intent.
                     Intent intent = new Autocomplete.IntentBuilder(
-                            AutocompleteActivityMode.FULLSCREEN,fields)
+                            AutocompleteActivityMode.FULLSCREEN, fields)
                             .setTypeFilter(TypeFilter.ESTABLISHMENT)
                             .setLocationBias(bounds)
                             .setCountries(Arrays.asList("KE"))
@@ -196,45 +214,22 @@ public class PassengerMapsFragment extends Fragment {
             }
         });
 
-//        driverDatabaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-//                    DriverDetails driverDetails = dataSnapshot.getValue(DriverDetails.class);
-//                    list.add(driverDetails);
-//                }
-//                adapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//
-//            }
-//        });
 
-//        getAvailableRoutes();
         driverDatabaseReference = firebaseDatabase.getReference("Drivers");
-//        user_driverDatabaseReference = firebaseDatabase.getReference("Users");
-        //getAvailableRoutes();
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.google_map);
-        //Toast toast = Toast.makeText(getContext(),driver_id,Toast.LENGTH_SHORT);
-        //toast.show();
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
             mBottomSheetBehavior.setHideable(false);
 
         }
-        client = LocationServices.getFusedLocationProviderClient(getContext());
-        getCurrentLocation();
 
         mHeaderLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
+                if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     mInputLayout.setVisibility(View.GONE);
-                }
-                else {
+                } else {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     mInputLayout.setVisibility(View.VISIBLE);
                 }
@@ -253,6 +248,7 @@ public class PassengerMapsFragment extends Fragment {
         });
         return view;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE_FROM) {
@@ -269,7 +265,7 @@ public class PassengerMapsFragment extends Fragment {
 
             }
             return;
-        }else if(requestCode == AUTOCOMPLETE_REQUEST_CODE_WHERE){
+        } else if (requestCode == AUTOCOMPLETE_REQUEST_CODE_WHERE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
@@ -282,8 +278,7 @@ public class PassengerMapsFragment extends Fragment {
                 // The user canceled the operation.
             }
             return;
-        }
-        else {
+        } else {
             Place place = Autocomplete.getPlaceFromIntent(data);
             Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             mWhere.getEditText().setText(place.getName());
@@ -352,10 +347,7 @@ public class PassengerMapsFragment extends Fragment {
             startActivity(intent);
         }
     }
-    //    public void onStop() {
-//
-//        super.onStop();
-//    }
+
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
@@ -369,6 +361,8 @@ public class PassengerMapsFragment extends Fragment {
                         public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
                             mBottomSheetBehavior.setHideable(false);
                             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            Log.d("My Location", location.toString());
+                            locationDatabaseReference.child(mCurrentUser.getUid()).setValue(location);
                             MarkerOptions markerOptions = new MarkerOptions().position(latLng)
                                     .title("Your Location");
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
@@ -464,23 +458,4 @@ public class PassengerMapsFragment extends Fragment {
         }
     }
 
-//    private void getAvailableRoutes(){
-//       driverDatabaseReference.addValueEventListener(new ValueEventListener() {
-//           @Override
-//           public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//               for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-//                   DriverDetails driverDetails = dataSnapshot.getValue(DriverDetails.class);
-//                    list.add(driverDetails);
-//               }
-//               adapter = new DriverRouteAdapter(getContext(),list);
-//               recyclerView.setAdapter(adapter);
-//               adapter.notifyDataSetChanged();
-//           }
-//
-//           @Override
-//           public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//
-//           }
-//       });
-//    }
 }

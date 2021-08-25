@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_8sdp">
+        <TextView
+            android:id="@+id/destination_report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:text="Destination"
+            android:textSize="@dimen/_14sdp"
+            android:fontFamily="@font/open_sans_semibold"/>
+        <TextView
+            android:id="@+id/trip_date_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aug 21, 2021 7:29:58 PM"
+            android:fontFamily="@font/open_sans_regular"
+            android:layout_below="@id/destination_report"/>
+        <TextView
+            android:id="@+id/trip_status_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:text="FINISHED"
+            android:fontFamily="@font/open_sans_regular"
+            android:layout_below="@id/trip_date_report"/>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

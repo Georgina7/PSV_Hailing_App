@@ -56,4 +56,6 @@
     <string name="add_more">Add more</string>
     <string name="select_date">Select Date</string>
     <string name="select_time">Select Time</string>
+    <string name="your_trips">Your Trips</string>
+    <string name="trip_details">Trip Details</string>
 </resources>

@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.TimeZone;
@@ -49,6 +50,7 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     private long today;
     private CalendarConstraints.Builder constraintBuilder;
     private String driverID;
+    private ArrayList<DriverDetails> driversList;
 
     @SuppressLint("NewApi")
     @Override
