@@ -56,7 +56,7 @@ public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.Vi
 
         public void bindTo(Trip currentTrip) {
             destination.setText(currentTrip.getDestination());
-            date.setText(currentTrip.getDate());
+            date.setText(currentTrip.getDate_time());
             if(currentTrip.getStatus().equals("pending")){
                 status.setTextColor(Color.rgb(64,224,208));
             }else if(currentTrip.getStatus().equals("completed")){
@@ -72,6 +72,7 @@ public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.Vi
                     Intent intent = new Intent(myContext, SingleTripHistoryPWDActivity.class);
                     Toast.makeText(myContext, "Trip Clicked", Toast.LENGTH_SHORT).show();
                     myContext.startActivity(intent);
+                    //This intent doesn't work
                 }
             });
 

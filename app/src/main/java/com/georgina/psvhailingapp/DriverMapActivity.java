@@ -104,6 +104,9 @@ public class DriverMapActivity extends AppCompatActivity implements NavigationVi
             case R.id.driver_details:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new DriverDetailsFragment()).commit();
                 break;
+            case R.id.driver_trips:
+                Intent intent = new Intent(this,SeatBookingsActivity.class);
+                startActivity(intent);
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;

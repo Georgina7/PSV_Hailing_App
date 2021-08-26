@@ -18,6 +18,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -38,6 +40,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +53,9 @@ public class DriverMapsFragment extends Fragment {
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
 
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+
     com.google.android.gms.location.LocationRequest locationRequest;
     LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -57,8 +64,12 @@ public class DriverMapsFragment extends Fragment {
             if(locationResult == null){
                 return;
             }
+            databaseReference = firebaseDatabase.getReference("Locations");
+            GeoFire geoFire = new GeoFire(databaseReference);
             for(Location location: locationResult.getLocations()){
                 Log.d("onLocationResult", location.toString());
+                geoFire.removeLocation(mCurrentUser.getUid());
+                geoFire.setLocation(mCurrentUser.getUid(), new GeoLocation(location.getLatitude(), location.getLongitude()));
             }
         }
     };
@@ -85,6 +96,8 @@ public class DriverMapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
 
         client = LocationServices.getFusedLocationProviderClient(getContext());
         getCurrentLocation();

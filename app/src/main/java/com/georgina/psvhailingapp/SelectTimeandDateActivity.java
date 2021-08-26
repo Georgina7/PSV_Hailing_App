@@ -3,6 +3,7 @@ package com.georgina.psvhailingapp;
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -15,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.geofire.GeoFire;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -32,17 +35,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class SelectTimeandDateActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
-    private TextInputLayout mDate;
-    private TextInputLayout mTime;
     private TextInputLayout mInfo;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
@@ -50,7 +54,7 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     private long today;
     private CalendarConstraints.Builder constraintBuilder;
     private String driverID;
-    private ArrayList<DriverDetails> driversList;
+    private ArrayList<String> driversList;
 
     @SuppressLint("NewApi")
     @Override
@@ -59,12 +63,14 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_timeand_date);
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
-        mDate = findViewById(R.id.date);
-        mTime = findViewById(R.id.time);
+        //mDate = findViewById(R.id.date);
+        //mTime = findViewById(R.id.time);
         mInfo = findViewById(R.id.info);
         mSeats = findViewById(R.id.no_seats);
         mSeats.setMaxValue(50);
         mSeats.setMinValue(0);
+
+        driversList = new ArrayList<>();
 
         //Calendar for Date Picker
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(getString(R.string.utc)));
@@ -87,100 +93,100 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         );
 
         //Date Picker
-        onClickDate();
-        final int[] hour = new int[1];
-        int minute = 0;
+//        onClickDate();
+//        final int[] hour = new int[1];
+//        int minute = 0;
         //Showing the Date Picker
-        mDate.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(view.isFocused()){
-                    MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
-                    builder.setTitleText(R.string.select_date);
-                    builder.setSelection(today);
-                    builder.setCalendarConstraints(constraintBuilder.build());
-                    MaterialDatePicker materialDatePicker = builder.build();
-                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
-                    materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
-                        @Override
-                        public void onPositiveButtonClick(Object selection) {
-                            mDate.getEditText().setText(materialDatePicker.getHeaderText());
-                        }
-                    });
-                }
-            }
-        });
+//        mDate.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean b) {
+//                if(view.isFocused()){
+//                    MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+//                    builder.setTitleText(R.string.select_date);
+//                    builder.setSelection(today);
+//                    builder.setCalendarConstraints(constraintBuilder.build());
+//                    MaterialDatePicker materialDatePicker = builder.build();
+//                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+//                    materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
+//                        @Override
+//                        public void onPositiveButtonClick(Object selection) {
+//                            mDate.getEditText().setText(materialDatePicker.getHeaderText());
+//                        }
+//                    });
+//                }
+//            }
+//        });
 
         //Showing Time Picker
-        onClickTime();
-        mTime.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View timeView, boolean b) {
-                if(timeView.isFocused()){
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(SelectTimeandDateActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        hour[0] = hourOfDay;
-                        minute = minute;
-
-                        Calendar calendar1 = Calendar.getInstance();
-                        //setting hour and minute
-                        calendar1.set(0,0,0, hour[0],minute);
-                        mTime.getEditText().setText(DateFormat.format(getString(R.string.date_format),calendar1));
-                    }
-                },12,0,false);
-                //Show the previous selected time
-                timePickerDialog.updateTime(hour[0],minute);
-                timePickerDialog.show();
-                }
-            }
-        });
+//        onClickTime();
+//        mTime.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View timeView, boolean b) {
+//                if(timeView.isFocused()){
+//                    TimePickerDialog timePickerDialog = new TimePickerDialog(SelectTimeandDateActivity.this, new TimePickerDialog.OnTimeSetListener() {
+//                    @Override
+//                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//                        hour[0] = hourOfDay;
+//                        minute = minute;
+//
+//                        Calendar calendar1 = Calendar.getInstance();
+//                        //setting hour and minute
+//                        calendar1.set(0,0,0, hour[0],minute);
+//                        mTime.getEditText().setText(DateFormat.format(getString(R.string.date_format),calendar1));
+//                    }
+//                },12,0,false);
+//                //Show the previous selected time
+//                timePickerDialog.updateTime(hour[0],minute);
+//                timePickerDialog.show();
+//                }
+//            }
+//        });
     }
 
-    private void onClickDate() {
-        mDate.getEditText().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
-                builder.setTitleText(R.string.select_date);
-                builder.setSelection(today);
-                builder.setCalendarConstraints(constraintBuilder.build());
-                MaterialDatePicker materialDatePicker = builder.build();
-                materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
-                materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
-                    @Override
-                    public void onPositiveButtonClick(Object selection) {
-                        mDate.getEditText().setText(materialDatePicker.getHeaderText());
-                    }
-                });
-            }
-        });
-    }
+//    private void onClickDate() {
+//        mDate.getEditText().setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+//                builder.setTitleText(R.string.select_date);
+//                builder.setSelection(today);
+//                builder.setCalendarConstraints(constraintBuilder.build());
+//                MaterialDatePicker materialDatePicker = builder.build();
+//                materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+//                materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
+//                    @Override
+//                    public void onPositiveButtonClick(Object selection) {
+//                        mDate.getEditText().setText(materialDatePicker.getHeaderText());
+//                    }
+//                });
+//            }
+//        });
+//    }
 
-    private void onClickTime() {
-        mTime.getEditText().setOnClickListener(new View.OnClickListener() {
-            final int[] hour = new int[1];
-            int minute = 0;
-            @Override
-            public void onClick(View v) {
-                TimePickerDialog timePickerDialog = new TimePickerDialog(SelectTimeandDateActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        hour[0] = hourOfDay;
-                        minute = minute;
-
-                        Calendar calendar1 = Calendar.getInstance();
-                        //setting hour and minute
-                        calendar1.set(0,0,0, hour[0],minute);
-                        mTime.getEditText().setText(DateFormat.format(getString(R.string.date_format),calendar1));
-                    }
-                },12,0,false);
-                //Show the previous selected time
-                timePickerDialog.updateTime(hour[0],minute);
-                timePickerDialog.show();
-            }
-        });
-    }
+//    private void onClickTime() {
+//        mTime.getEditText().setOnClickListener(new View.OnClickListener() {
+//            final int[] hour = new int[1];
+//            int minute = 0;
+//            @Override
+//            public void onClick(View v) {
+//                TimePickerDialog timePickerDialog = new TimePickerDialog(SelectTimeandDateActivity.this, new TimePickerDialog.OnTimeSetListener() {
+//                    @Override
+//                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//                        hour[0] = hourOfDay;
+//                        minute = minute;
+//
+//                        Calendar calendar1 = Calendar.getInstance();
+//                        //setting hour and minute
+//                        calendar1.set(0,0,0, hour[0],minute);
+//                        mTime.getEditText().setText(DateFormat.format(getString(R.string.date_format),calendar1));
+//                    }
+//                },12,0,false);
+//                //Show the previous selected time
+//                timePickerDialog.updateTime(hour[0],minute);
+//                timePickerDialog.show();
+//            }
+//        });
+//    }
 
     @Override
     public void onStart(){
@@ -192,16 +198,16 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     }
     //Onclick button to proceed
     public void proceed(View view) {
-        if (!validateDate() | !validateTime() | !validateInfo()){
+        if (!validateInfo()){
             return;
         }
         else{
-            addBookingDetails();
+            findDriver();
             //Toast.makeText(SelectTimeandDateActivity.this,"Data has been added",Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void addBookingDetails() {
+    private void findDriver() {
         Intent i = getIntent();
         String source, dest, activity;
         activity = i.getStringExtra("Activity");
@@ -213,8 +219,10 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
             dest = i.getStringExtra(PassengerMapsFragment.EXTRA_DEST);
         }
 
-        //Toast.makeText(getApplicationContext(), source + " - " + dest , Toast.LENGTH_SHORT).show();
         checkForRoute(source, dest);
+
+        //Toast.makeText(getApplicationContext(), source + " - " + dest , Toast.LENGTH_SHORT).show();
+
         //String driver_id = getDriverID();
 //        if(driver_id.isEmpty()){
 //            Toast.makeText(getApplicationContext(), "No Driver", Toast.LENGTH_SHORT).show();
@@ -228,7 +236,9 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
 //            String pwd_id = mCurrentUser.getUid();
 //            String driver_id = getDriverID();
 //            String status = "pending";
-//            int seat = mSeats.getValue();
+//              String date = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault())
+//                      .format(new Date());
+////            int seat = mSeats.getValue();
 //            String date = mDate.getEditText().getText().toString();
 //            String time = mTime.getEditText().getText().toString();
 //            String info = mInfo.getEditText().getText().toString();
@@ -280,22 +290,94 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 Iterator<DataSnapshot> drivers = snapshot.getChildren().iterator();
+                driversList.clear();
+                Boolean seatsAvailable = true;
                 while (drivers.hasNext()){
                     DataSnapshot driver = drivers.next();
-                    if(driver.child("routes").getValue().equals(finalRoute_key)){
-                        setDriverID(driver.getKey());
-                        Log.d("Driver", driver.getValue().toString());
+                    if(driver.child("routes").getValue().equals(finalRoute_key)
+                        && driver.child("status").getValue().equals("enabled")
+                        && driver.child("availability").getValue().equals("active")){
+                        int seats = Integer.valueOf(String.valueOf(driver.child("seats").getValue()));
+                        if(seats >= mSeats.getValue()){
+                            driversList.add(driver.getKey());
+                            setDriverID(driver.getKey());
+                            Log.d("Driver", getDriverID());
+
+                        }
+                        seatsAvailable = false;
                     }else{
                         Log.d("Other", finalRoute_key);
                     }
                 }
+
+                if(driversList.size() == 0){
+                    if(!seatsAvailable){
+                        Toast.makeText(getApplicationContext(), "Seats requested are unavailable", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "No driver registered on this route", Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    findClosestDriver(driversList);
+                }
+
             }
+
 
             @Override
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
             }
         });
+
+
+    }
+
+    private void findClosestDriver(ArrayList<String> driversList) {
+        databaseReference = firebaseDatabase.getReference("Locations");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                LatLng userLoc = new LatLng(snapshot.child(mCurrentUser.getUid()).child("latitude").getValue(Long.class),
+                        snapshot.child(mCurrentUser.getUid()).child("longitude").getValue(Long.class));
+                Log.d("UserLoc", userLoc.toString());
+                float smallestDist = -1;
+                String closestDriver = "";
+                for(int counter = 0; counter < driversList.size(); counter++){
+                    String driverID = driversList.get(counter);
+                    snapshot.child(driverID).child("l");
+                    LatLng driverLoc = new LatLng(snapshot.child(driverID).child("l").child("0").getValue(Long.class),
+                            snapshot.child(driverID).child("l").child("1").getValue(Long.class));
+                    Log.d("DriverLoc", driverLoc.toString());
+                    float[] distance = new float[1];
+                    Location.distanceBetween(userLoc.latitude, userLoc.longitude,
+                            driverLoc.latitude,
+                            driverLoc.longitude, distance);
+                    Log.d("Distance", Float.toString(distance[0]));
+                    if(smallestDist == -1 || distance[0] < smallestDist){
+                        closestDriver = driverID;
+                        smallestDist = distance[0];
+                    }
+                }
+                confirmDetailsIntent(closestDriver);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void confirmDetailsIntent(String closestDriver) {
+        String driver_id = closestDriver;
+        String info = mInfo.getEditText().getText().toString();
+        int seat = mSeats.getValue();
+        Toast.makeText(getApplicationContext(), "We made it",Toast.LENGTH_SHORT).show();
+    }
+
+    private void sendUserToMain(){
+        Intent intent = new Intent(SelectTimeandDateActivity.this, PassengerMapActivity.class);
+
     }
 
     public String getDriverID() {
@@ -318,27 +400,27 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
             return true;
         }
     }
-    private boolean validateDate(){
-        String date = mDate.getEditText().getText().toString().trim();
-        if(date.isEmpty()){
-            mDate.setError(getString(R.string.empty_field));
-            return false;
-        }
-        else {
-            mDate.setError(null);
-            return true;
-        }
-    }
-    private boolean validateTime(){
-        String time = mTime.getEditText().getText().toString().trim();
-        if(time.isEmpty()){
-            mTime.setError(getString(R.string.empty_field));
-            return false;
-        }
-        else {
-            mTime.setError(null);
-            return true;
-        }
-    }
+//    private boolean validateDate(){
+//        String date = mDate.getEditText().getText().toString().trim();
+//        if(date.isEmpty()){
+//            mDate.setError(getString(R.string.empty_field));
+//            return false;
+//        }
+//        else {
+//            mDate.setError(null);
+//            return true;
+//        }
+//    }
+//    private boolean validateTime(){
+//        String time = mTime.getEditText().getText().toString().trim();
+//        if(time.isEmpty()){
+//            mTime.setError(getString(R.string.empty_field));
+//            return false;
+//        }
+//        else {
+//            mTime.setError(null);
+//            return true;
+//        }
+//    }
 
 }

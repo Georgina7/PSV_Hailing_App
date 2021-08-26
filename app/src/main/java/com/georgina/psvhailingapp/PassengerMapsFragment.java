@@ -293,10 +293,12 @@ public class PassengerMapsFragment extends Fragment {
                 Iterator<DataSnapshot> routes = snapshot.getChildren().iterator();
                 while (routes.hasNext()){
                     DataSnapshot route = routes.next();
-                    routesList.add(route.child("routes").getValue().toString());
+                    if(route.child("availability").getValue().equals("active") &&
+                            route.child("status").getValue().equals("enabled")){
+                        routesList.add(route.child("routes").getValue().toString());
+                    }
                 }
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override
