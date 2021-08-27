@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    app:behavior_peekHeight="@dimen/_200sdp"
+    app:behavior_hideable="false">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/match_driver_profile"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:src="@drawable/ic_account" />
+
+        <TextView
+            android:id="@+id/match_driver_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="@dimen/_12sdp"
+            android:text="Michael Kambona,"
+            android:layout_toRightOf="@id/match_driver_profile"/>
+
+        <TextView
+            android:id="@+id/driver_estimate_arrival_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_3sdp"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="@dimen/_12sdp"
+            android:text="Arrives in 20 mins"
+            android:layout_toRightOf="@id/match_driver_name"/>
+
+        <TextView
+            android:id="@+id/match_driver_matatu_plate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:text="KCM 023J"
+            android:fontFamily="@font/open_sans_regular"
+            android:layout_below="@id/driver_estimate_arrival_time"
+            android:layout_toRightOf="@id/match_driver_profile"/>
+
+        <TextView
+            android:id="@+id/call_driver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:text="Call Driver"
+            android:fontFamily="@font/open_sans_bold"
+            android:textSize="@dimen/_11sdp"
+            android:textColor="@color/pwd_color_accent"
+            android:layout_below="@id/match_driver_matatu_plate"
+            android:layout_toRightOf="@id/match_driver_profile"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_7sdp"
+            android:layout_marginRight="@dimen/_7sdp"
+            android:text="Cancel Trip"
+            android:onClick="cancelTrip"
+            android:layout_below="@id/match_driver_profile"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_7sdp"
+            android:layout_marginRight="@dimen/_7sdp"
+            android:text="Make Payment"
+            android:onClick="makePayment"
+            android:layout_below="@id/match_driver_profile"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PSVHailingApp">
         <activity
+            android:name=".PassengerTripActivity"
+            android:exported="true" />
+        <activity
             android:name=".SingleTripHistoryPWDActivity"
             android:exported="true" />
         <activity

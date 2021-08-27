@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.geofire.GeoFire;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -53,8 +55,9 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     private NumberPicker mSeats;
     private long today;
     private CalendarConstraints.Builder constraintBuilder;
-    private String driverID;
+    private String driverID, source, dest, activity;
     private ArrayList<String> driversList;
+    private int seats_available;
 
     @SuppressLint("NewApi")
     @Override
@@ -209,7 +212,6 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
 
     private void findDriver() {
         Intent i = getIntent();
-        String source, dest, activity;
         activity = i.getStringExtra("Activity");
         if(activity.equals("SelectDropOff")){
             source = i.getStringExtra("Source");
@@ -358,7 +360,7 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
                         smallestDist = distance[0];
                     }
                 }
-                confirmDetailsIntent(closestDriver);
+                addBookingDetails(closestDriver);
             }
 
             @Override
@@ -368,11 +370,52 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         });
     }
 
-    private void confirmDetailsIntent(String closestDriver) {
+    private void addBookingDetails(String closestDriver) {
         String driver_id = closestDriver;
         String info = mInfo.getEditText().getText().toString();
+        String status = "pending";
         int seat = mSeats.getValue();
-        Toast.makeText(getApplicationContext(), "We made it",Toast.LENGTH_SHORT).show();
+        String date = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault())
+                .format(new Date());
+        Trip trip = new Trip(mCurrentUser.getUid(),driver_id, source, dest, date, info, status, seat);
+        databaseReference = firebaseDatabase.getReference("Trips");
+        String key = databaseReference.push().getKey();
+        databaseReference.child(key).setValue(trip);
+
+        getSeatsAvailable(driver_id);
+
+        Intent intent = new Intent(SelectTimeandDateActivity.this, PassengerTripActivity.class);
+        intent.putExtra("TripKey", key);
+        intent.putExtra("DriverID", driver_id);
+        startActivity(intent);
+        //Toast.makeText(getApplicationContext(), source + " - " + dest,Toast.LENGTH_SHORT).show();
+    }
+
+    private void getSeatsAvailable(String driver_id) {
+        DatabaseReference seatsAllocated = firebaseDatabase.getReference("Drivers").child(driver_id);
+        seatsAllocated.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    int available = Integer.valueOf(String.valueOf(task.getResult().child("seats").getValue()));
+                    setSeats_available(available);
+
+                }
+            }
+
+          });
+
+        updateSeatsAvailable(driver_id);
+
+    }
+
+    private void updateSeatsAvailable(String driver_id) {
+        int available_seats = getSeats_available() - mSeats.getValue();
+        DatabaseReference seatsAllocated = firebaseDatabase.getReference("Drivers").child(driver_id);
+        seatsAllocated.child("seats").setValue(available_seats);
     }
 
     private void sendUserToMain(){
@@ -386,6 +429,14 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
 
     public void setDriverID(String driverID) {
         this.driverID = driverID;
+    }
+
+    public int getSeats_available() {
+        return seats_available;
+    }
+
+    public void setSeats_available(int seats_available) {
+        this.seats_available = seats_available;
     }
 
     //Validation of Input Fields

@@ -13,6 +13,7 @@
 
 
     <include layout="@layout/available_routes_bottom_sheet" />
+
     <fragment android:id="@+id/autocomplete_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

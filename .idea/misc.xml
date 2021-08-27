@@ -10,7 +10,8 @@
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_driver_map.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_driver_trip_details.xml" value="0.25" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_login.xml" value="0.17239583333333333" />
-        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_passenger_map.xml" value="0.33" />
+        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_passenger_map.xml" value="0.12" />
+        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_passenger_trip.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_pwdtrip_reports.xml" value="0.16" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_seat_bookings.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_select_dropoff.xml" value="0.17239583333333333" />
@@ -19,7 +20,8 @@
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/activity_single_trip_history_pwdactivity.xml" value="0.33" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/available_routes_bottom_sheet.xml" value="0.17239583333333333" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/booking_list_item.xml" value="0.5" />
-        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/fragment_passenger_maps.xml" value="0.17239583333333333" />
+        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/fragment_passenger_maps.xml" value="0.15" />
+        <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/passenger_current_trip_bottom_sheet.xml" value="0.25" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/routes_list.xml" value="0.33" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/stop_list_item.xml" value="0.33" />
         <entry key="..\:/Users/Chumba/AndroidStudioProjects/PSVHailingApp/app/src/main/res/layout/trips_report_item_pwd.xml" value="0.33" />
