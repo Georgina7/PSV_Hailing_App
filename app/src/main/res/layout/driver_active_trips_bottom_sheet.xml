@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    app:behavior_peekHeight="@dimen/_200sdp"
+    app:behavior_hideable="false">
+
+    <LinearLayout
+        android:id="@+id/header_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/bottom_sheet_bar">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottom_sheet_textView"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:text="Active Trips"
+            android:textSize="@dimen/_14ssp"
+            android:padding="@dimen/_14sdp"
+            android:paddingRight="@dimen/_8sdp"
+            android:paddingLeft="@dimen/_20sdp"
+            android:fontFamily="@font/open_sans_semibold"
+            android:layout_weight="3"
+            android:paddingEnd="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_60sdp"
+            android:paddingStart="@dimen/_20sdp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/arrow"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_arrow_up" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_active_driver_trips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        app:layout_constraintTop_toBottomOf="@+id/header_layout">
+    </androidx.recyclerview.widget.RecyclerView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
