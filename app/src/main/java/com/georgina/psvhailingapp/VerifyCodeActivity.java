@@ -108,15 +108,16 @@ public class VerifyCodeActivity extends AppCompatActivity {
                     String email = String.valueOf(dataSnapshot.child("email").getValue());
                     String fullName = String.valueOf(dataSnapshot.child("fullName").getValue());
                     String imgPath = String.valueOf(dataSnapshot.child("profileImagePath").getValue());
-                    updateUserContact(email, fullName, imgPath);
+                    String status = String.valueOf(dataSnapshot.child("status").getValue());
+                    updateUserContact(email, fullName, imgPath, status);
                 }
             }
         });
     }
 
-    private void updateUserContact(String email, String fullName, String imgPath){
+    private void updateUserContact(String email, String fullName, String imgPath, String status){
         firebaseDatabase = FirebaseDatabase.getInstance();
-        User user = new User(fullName, email, mPhoneNumber, imgPath);
+        User user = new User(fullName, email, mPhoneNumber, imgPath, status);
         databaseReference = firebaseDatabase.getReference("Users").child(mCurrentUser.getUid());
         databaseReference.setValue(user);
         Toast.makeText(getApplicationContext(),"Contact Updated Successfully", Toast.LENGTH_SHORT).show();
