@@ -1,15 +1,16 @@
 package com.georgina.psvhailingapp;
 
 public class User {
-    public String fullName,email,number, profileImagePath;
+    public String fullName,email,number, profileImagePath, status;
 
     public User(){ }
 
-    public User(String fullName, String email, String number, String profileImagePath) {
+    public User(String fullName, String email, String number, String profileImagePath, String status) {
         this.fullName = fullName;
         this.email = email;
         this.number= number;
         this.profileImagePath = profileImagePath;
+        this.status = status;
     }
 
     public String getFullName() {
@@ -42,5 +43,13 @@ public class User {
 
     public void setProfileImagePath(String profileImagePath) {
         this.profileImagePath = profileImagePath;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

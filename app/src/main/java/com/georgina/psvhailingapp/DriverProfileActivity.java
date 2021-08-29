@@ -70,9 +70,10 @@ public class DriverProfileActivity extends AppCompatActivity {
                 String email = mEmail.getEditText().getText().toString();
                 String fullName = mFullName.getEditText().getText().toString();
                 String phoneNumber = mContact.getEditText().getText().toString();
+                String status = "enabled";
                 String profileImgPath = selectedImagePath;
                 firebaseDatabase = FirebaseDatabase.getInstance();
-                User user = new User(fullName, email, phoneNumber, profileImgPath);
+                User user = new User(fullName, email, phoneNumber, profileImgPath, status);
                 databaseReference = firebaseDatabase.getReference("Users").child(firebaseUser.getUid());
                 databaseReference.setValue(user);
                 Toast.makeText(getApplicationContext(), "Profile Updated Successfully", Toast.LENGTH_SHORT).show();

@@ -115,13 +115,14 @@ public class DriverDetailsActivity extends AppCompatActivity {
     private void updateDriverDetails(String user_id){
 
         String availability = "active";
+        String status ="enabled";
         String licence_number = mLicenceNo.getEditText().getText().toString();
         String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
         String routes = mRoutes.getEditText().getText().toString();
         Integer seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available, availability);
+        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available, availability,status);
         databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
         databaseReference.setValue(driverDetails);
     }
