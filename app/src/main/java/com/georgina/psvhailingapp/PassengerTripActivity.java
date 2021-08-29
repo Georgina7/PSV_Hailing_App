@@ -28,10 +28,10 @@ public class PassengerTripActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_trip);
-        trip_key = getIntent().getStringExtra("TripKey");
-        Toast.makeText(getApplicationContext(), trip_key, Toast.LENGTH_SHORT).show();
 
-//        getSupportFragmentManager().beginTransaction().replace(R.id.pwd_trip_map_fragment_container,new PassengerTripMapsFragment()).commit();
+        //Toast.makeText(getApplicationContext(), trip_key, Toast.LENGTH_SHORT).show();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.pwd_trip_map_fragment_container,new PassengerTripMapsFragment()).commit();
 //
 //        matatuPlate = findViewById(R.id.match_driver_matatu_plate);
 //        driverName = findViewById(R.id.match_driver_name);
