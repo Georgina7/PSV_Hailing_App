@@ -31,56 +31,56 @@ public class PassengerTripActivity extends AppCompatActivity {
         trip_key = getIntent().getStringExtra("TripKey");
         Toast.makeText(getApplicationContext(), trip_key, Toast.LENGTH_SHORT).show();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.pwd_trip_map_fragment_container,new PassengerTripMapsFragment()).commit();
-
-        matatuPlate = findViewById(R.id.match_driver_matatu_plate);
-        driverName = findViewById(R.id.match_driver_name);
-        driverTimeEstimate = findViewById(R.id.driver_estimate_arrival_time);
-        driverContact = findViewById(R.id.call_driver);
-
-        String driverID = getIntent().getStringExtra("DriverID");
-
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Drivers").child(driverID);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                matatuPlate.setText(snapshot.child("licenceNo").getValue().toString());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        databaseReference = firebaseDatabase.getReference("Users").child(driverID);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                driverName.setText(snapshot.child("fullName").getValue().toString());
-                String contact = snapshot.child("number").getValue().toString();
-                String profileImage = snapshot.child("profileImagePath").getValue().toString();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        databaseReference = firebaseDatabase.getReference("Trips").child(trip_key);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //Find a way to calculate time estimate using distance stored in the trip instance
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        getSupportFragmentManager().beginTransaction().replace(R.id.pwd_trip_map_fragment_container,new PassengerTripMapsFragment()).commit();
+//
+//        matatuPlate = findViewById(R.id.match_driver_matatu_plate);
+//        driverName = findViewById(R.id.match_driver_name);
+//        driverTimeEstimate = findViewById(R.id.driver_estimate_arrival_time);
+//        driverContact = findViewById(R.id.call_driver);
+//
+//        String driverID = getIntent().getStringExtra("DriverID");
+//
+//        firebaseDatabase = FirebaseDatabase.getInstance();
+//        databaseReference = firebaseDatabase.getReference("Drivers").child(driverID);
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                matatuPlate.setText(snapshot.child("licenceNo").getValue().toString());
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//
+//        databaseReference = firebaseDatabase.getReference("Users").child(driverID);
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                driverName.setText(snapshot.child("fullName").getValue().toString());
+//                String contact = snapshot.child("number").getValue().toString();
+//                String profileImage = snapshot.child("profileImagePath").getValue().toString();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//
+//        databaseReference = firebaseDatabase.getReference("Trips").child(trip_key);
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                //Find a way to calculate time estimate using distance stored in the trip instance
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
 
     }
 

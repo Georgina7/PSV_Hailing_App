@@ -77,7 +77,8 @@
                 android:layout_height="@dimen/_55sdp"
                 android:layout_below="@id/image_map_screenshot"
                 android:layout_marginTop="@dimen/_15sdp"
-                android:layout_marginRight="@dimen/_5sdp"/>
+                android:layout_marginRight="@dimen/_5sdp"
+                android:src="@drawable/ic_account"/>
 
             <TextView
                 android:id="@+id/trip_status_detail"
@@ -102,14 +103,6 @@
 
 
         </RelativeLayout>
-
-
-
-
-
-
-
-
 
     </androidx.cardview.widget.CardView>
 

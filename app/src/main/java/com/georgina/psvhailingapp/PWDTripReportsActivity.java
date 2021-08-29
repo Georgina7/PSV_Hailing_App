@@ -26,6 +26,7 @@ public class PWDTripReportsActivity extends AppCompatActivity {
 
     private RecyclerView tripsRecyclerView;
     private ArrayList<Trip> tripsData;
+    private ArrayList<String> tripIDs;
     private TripReportAdapter tripReportAdapter;
 
     private FirebaseDatabase firebaseDatabase;
@@ -59,7 +60,8 @@ public class PWDTripReportsActivity extends AppCompatActivity {
         tripsRecyclerView = findViewById(R.id.recycler_pwd_trip_report);
         tripsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         tripsData = new ArrayList<>();
-        tripReportAdapter = new TripReportAdapter(tripsData, getApplicationContext());
+        tripIDs = new ArrayList<>();
+        tripReportAdapter = new TripReportAdapter(tripsData, PWDTripReportsActivity.this, tripIDs);
         tripsRecyclerView.setAdapter(tripReportAdapter);
         initializeStopsData();
     }
@@ -69,12 +71,14 @@ public class PWDTripReportsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 tripsData.clear();
+                tripIDs.clear();
                 Iterator<DataSnapshot> trips = snapshot.getChildren().iterator();
                 while (trips.hasNext()){
                     DataSnapshot trip = trips.next();
                     if(trip.child("pwdID").getValue().equals(mCurrentUser.getUid())){
                         Log.d("Trip zake", trip.getValue().toString());
                         tripsData.add(trip.getValue(Trip.class));
+                        tripIDs.add(trip.getKey());
                     }else{
                         Log.d("Trip si zake", trip.getValue().toString());
                     }

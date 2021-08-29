@@ -1,5 +1,6 @@
 package com.georgina.psvhailingapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,12 +19,13 @@ import java.util.ArrayList;
 public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.ViewHolder>{
 
     private ArrayList<Trip> tripReports;
-    private Context myContext;
+    private Activity myContext;
+    private ArrayList<String> tripIDs;
 
-    TripReportAdapter(ArrayList<Trip> mTripsData, Context context) {
+    TripReportAdapter(ArrayList<Trip> mTripsData, Activity context, ArrayList<String> tripIDs) {
         this.tripReports = mTripsData;
         this.myContext = context;
-
+        this.tripIDs = tripIDs;
     }
 
     @NonNull
@@ -35,7 +37,8 @@ public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull TripReportAdapter.ViewHolder holder, int position) {
         Trip availableTrip = tripReports.get(position);
-        holder.bindTo(availableTrip);
+        String currentTripID = tripIDs.get(position);
+        holder.bindTo(availableTrip, currentTripID);
     }
 
     @Override
@@ -52,9 +55,10 @@ public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.Vi
             destination = itemView.findViewById(R.id.destination_report);
             date = itemView.findViewById(R.id.trip_date_report);
             status = itemView.findViewById(R.id.trip_status_report);
+
         }
 
-        public void bindTo(Trip currentTrip) {
+        public void bindTo(Trip currentTrip, String currentTripID) {
             destination.setText(currentTrip.getDestination());
             date.setText(currentTrip.getDate_time());
             if(currentTrip.getStatus().equals("pending")){
@@ -69,13 +73,25 @@ public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.Vi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(myContext, SingleTripHistoryPWDActivity.class);
-                    Toast.makeText(myContext, "Trip Clicked", Toast.LENGTH_SHORT).show();
-                    myContext.startActivity(intent);
-                    //This intent doesn't work
+                    if(currentTrip.getStatus().equals("pending")){
+                        Intent intent = new Intent(myContext, PassengerTripActivity.class);
+                        intent.putExtra("TripKey", currentTripID);
+                        myContext.startActivity(intent);
+                    }else{
+                        Intent intent = new Intent(myContext, SingleTripHistoryPWDActivity.class);
+                        intent.putExtra("Status", currentTrip.getStatus());
+                        intent.putExtra("DriverID", currentTrip.getDriverID());
+                        intent.putExtra("Source", currentTrip.getSource());
+                        intent.putExtra("Destination", currentTrip.getDestination());
+                        intent.putExtra("Date", currentTrip.getDate_time());
+                        Toast.makeText(myContext, "Trip Clicked", Toast.LENGTH_SHORT).show();
+                        myContext.startActivity(intent);
+                    }
+
                 }
             });
-
         }
+
+
     }
 }

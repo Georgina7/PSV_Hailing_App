@@ -45,13 +45,13 @@ public class PassengerTripMapsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_passenger_trip_maps, container, false);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(callback);
-        }
-    }
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        SupportMapFragment mapFragment =
+//                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+//        if (mapFragment != null) {
+//            mapFragment.getMapAsync(callback);
+//        }
+//    }
 }
