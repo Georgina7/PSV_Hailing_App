@@ -15,9 +15,9 @@
             android:icon="@drawable/ic_email"
             android:title="@string/driver_details"/>
         <item
-            android:id="@+id/item3"
-            android:icon="@drawable/ic_email"
-            android:title="@string/item" />
+            android:id="@+id/driver_trips"
+            android:icon="@drawable/ic_trip"
+            android:title="@string/your_trips" />
     </group>
 
 </menu>

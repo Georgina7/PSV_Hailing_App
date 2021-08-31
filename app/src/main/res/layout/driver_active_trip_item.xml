@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_11sdp">
+
+        <TextView
+            android:id="@+id/active_trip_pwd_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Jane Mbiru your rider"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="@dimen/_16ssp"/>
+        <TextView
+            android:id="@+id/call_rider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Call Rider"
+            android:fontFamily="@font/open_sans_bold"
+           android:textSize="@dimen/_15ssp"
+            android:textColor="@color/psv_color_accent"
+            android:layout_below="@id/active_trip_pwd_name"/>
+        <LinearLayout
+            android:id="@+id/linear_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/call_rider">
+
+            <Button
+                android:id="@+id/cancel_driver_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_1sdp"
+                android:layout_weight="@integer/material_motion_duration_long_1"
+                android:text="Cancel"
+                android:backgroundTint="@color/psv_color_accent"
+                />
+
+            <Button
+                android:id="@+id/start_trip_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="@integer/material_motion_duration_long_1"
+                android:layout_marginLeft="@dimen/_1sdp"
+                android:text="Start Trip"
+                android:layout_below="@id/active_trip_pwd_name"
+                android:layout_toRightOf="@id/cancel_driver_button"
+                android:backgroundTint="@color/psv_color_accent"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/confirm_payment_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="@integer/material_motion_duration_long_1"
+            android:layout_marginLeft="@dimen/_1sdp"
+            android:text="Confirm Payment"
+            android:layout_below="@id/call_rider"
+            android:backgroundTint="@color/psv_color_accent"
+            android:visibility="gone"/>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

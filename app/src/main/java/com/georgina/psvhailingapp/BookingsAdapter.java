@@ -59,7 +59,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.ViewHo
             String pwdID = currentTrip.getPwdID();
             mPWDName.setText("Maria Booku");
             mPWDContact.setText("+255 8989 9899");
-            mDateTime.setText(currentTrip.getDate() + currentTrip.getTime());
+            mDateTime.setText(currentTrip.getDate_time());
             mSource.setText(currentTrip.getSource());
             mDestination.setText(currentTrip.getDestination());
         }

@@ -21,56 +21,56 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="center"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="@string/select_time_and_date" />
+            app:title="Additional Information" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
-        app:errorEnabled="true"
-        android:layout_marginRight="@dimen/_16sdp"
-        android:layout_marginLeft="@dimen/_16sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout1"
-        app:startIconDrawable="@drawable/ic_date"
-        app:startIconTint="@color/pwd_color_accent">
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/date"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="@dimen/_20sdp"-->
+<!--        app:errorEnabled="true"-->
+<!--        android:layout_marginRight="@dimen/_16sdp"-->
+<!--        android:layout_marginLeft="@dimen/_16sdp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/appBarLayout1"-->
+<!--        app:startIconDrawable="@drawable/ic_date"-->
+<!--        app:startIconTint="@color/pwd_color_accent">-->
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:hint="@string/select_date"
-            android:paddingTop="@dimen/_20sdp"
-            android:textSize="@dimen/_14ssp" />
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/white"-->
+<!--            android:hint="@string/select_date"-->
+<!--            android:paddingTop="@dimen/_20sdp"-->
+<!--            android:textSize="@dimen/_14ssp" />-->
 
-    </com.google.android.material.textfield.TextInputLayout>
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/_16sdp"
-        android:layout_marginLeft="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_16sdp"
-        app:errorEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date"
-        app:startIconDrawable="@drawable/ic_time"
-        app:startIconTint="@color/pwd_color_accent">
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/time"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginRight="@dimen/_16sdp"-->
+<!--        android:layout_marginLeft="@dimen/_16sdp"-->
+<!--        android:layout_marginTop="@dimen/_16sdp"-->
+<!--        app:errorEnabled="true"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/date"-->
+<!--        app:startIconDrawable="@drawable/ic_time"-->
+<!--        app:startIconTint="@color/pwd_color_accent">-->
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:hint="@string/select_time"
-            android:paddingTop="@dimen/_20sdp"
-            android:textSize="@dimen/_14ssp" />
-    </com.google.android.material.textfield.TextInputLayout>
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/white"-->
+<!--            android:hint="@string/select_time"-->
+<!--            android:paddingTop="@dimen/_20sdp"-->
+<!--            android:textSize="@dimen/_14ssp" />-->
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
 
     <TextView
         android:id="@+id/additional_information_text"
@@ -81,9 +81,8 @@
         android:layout_marginTop="@dimen/_16sdp"
         android:textSize="@dimen/_14ssp"
         android:fontFamily="@font/open_sans_regular"
-
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout1"
         android:layout_marginStart="@dimen/_16sdp" />
 
     <TextView

@@ -11,13 +11,9 @@
             android:title="@string/map"
             android:checked="true" />
         <item
-            android:id="@+id/item2"
-            android:icon="@drawable/ic_email"
-            android:title="@string/item" />
-        <item
-            android:id="@+id/item3"
-            android:icon="@drawable/ic_email"
-            android:title="@string/item" />
+            android:id="@+id/trip_reports"
+            android:icon="@drawable/ic_trip"
+            android:title="@string/your_trips" />
     </group>
 
 </menu>

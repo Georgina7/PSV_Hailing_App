@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.georgina.psvhailingapp">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -10,26 +11,17 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PSVHailingApp"
-        android:requestLegacyExternalStorage="true">
-        <activity android:name=".DriverProfileActivity"></activity>
-        <activity android:name=".DriverTripDetailsActivity" />
-        <activity android:name=".SplashActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        android:theme="@style/Theme.PSVHailingApp">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -42,13 +34,36 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".SeatBookingsActivity"></activity>
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".PassengerTripActivity"
+            android:exported="true" />
+        <activity
+            android:name=".SingleTripHistoryPWDActivity"
+            android:exported="true" />
+        <activity
+            android:name=".PWDTripReportsActivity"
+            android:exported="true" />
+        <activity android:name=".DriverProfileActivity" />
+        <activity android:name=".DriverTripDetailsActivity" />
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SeatBookingsActivity" />
         <activity android:name=".DriverMapActivity" />
         <activity android:name=".DriverDetailsActivity" />
         <activity
             android:name=".PassengerMapActivity"
-            android:theme="@style/Theme.PSVHailingApp.NoActionBar"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/Theme.PSVHailingApp.NoActionBar" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".VerifyCodeActivity" />
         <activity android:name=".SelectTimeandDateActivity" />

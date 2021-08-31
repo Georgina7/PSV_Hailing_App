@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         //Initialize firebase user
         mCurrentUser = mAuth.getCurrentUser();
+        mPhoneNumber.getEditText().setText(getIntent().getStringExtra("Contact"));
 
         mCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,9 +166,10 @@ public class MainActivity extends AppCompatActivity {
         String email = mEmail.getEditText().getText().toString();
         String fullName = mFullName.getEditText().getText().toString();
         String phoneNumber = mPhoneNumber.getEditText().getText().toString();
+        String status = "enabled";
         String profileImgPath = "";
         firebaseDatabase = FirebaseDatabase.getInstance();
-        User user = new User(fullName, email, phoneNumber, profileImgPath);
+        User user = new User(fullName, email, phoneNumber, profileImgPath, status);
         databaseReference = firebaseDatabase.getReference("Users").child(mCurrentUser.getUid());
         databaseReference.setValue(user);
         Toast.makeText(getApplicationContext(),"Account Created Successfully", Toast.LENGTH_SHORT).show();

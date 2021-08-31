@@ -2,6 +2,7 @@ package com.georgina.psvhailingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -115,15 +116,23 @@ public class DriverDetailsActivity extends AppCompatActivity {
     private void updateDriverDetails(String user_id){
 
         String availability = "active";
+        String status ="enabled";
         String licence_number = mLicenceNo.getEditText().getText().toString();
         String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
         String routes = mRoutes.getEditText().getText().toString();
         Integer seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available, availability);
+        DriverDetails driverDetails = new DriverDetails(licence_number,matatu_plate,routes,seats_available, availability,status);
         databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
         databaseReference.setValue(driverDetails);
+
+//        DatabaseReference driverRef = firebaseDatabase.getReference("Routes");
+//        String[] arrOfStr = routes.split("-");
+//        for (String a : arrOfStr){
+//            driverRef.child(a).setValue("true");
+//        }
+
     }
     private void sendToDriverMapActivity(){
         Intent intent = new Intent(DriverDetailsActivity.this,DriverMapActivity.class);

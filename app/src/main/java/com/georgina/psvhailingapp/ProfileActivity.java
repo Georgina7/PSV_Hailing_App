@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -22,13 +23,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -75,9 +81,10 @@ public class ProfileActivity extends AppCompatActivity {
                 String email = mEmail.getEditText().getText().toString();
                 String fullName = mFullName.getEditText().getText().toString();
                 String phoneNumber = mContact.getEditText().getText().toString();
+                String status = "enabled";
                 String profileImgPath = selectedImagePath;
                 firebaseDatabase = FirebaseDatabase.getInstance();
-                User user = new User(fullName, email, phoneNumber, profileImgPath);
+                User user = new User(fullName, email, phoneNumber, profileImgPath, status);
                 databaseReference = firebaseDatabase.getReference("Users").child(firebaseUser.getUid());
                 databaseReference.setValue(user);
                 Toast.makeText(getApplicationContext(), "Profile Updated Successfully", Toast.LENGTH_SHORT).show();
@@ -149,7 +156,52 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public void onStart(){
+        super.onStart();
+        if (firebaseUser == null){
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivity(intent);
+        }
+        else{
+            firebaseDatabase = FirebaseDatabase.getInstance();
+            databaseReference = firebaseDatabase.getReference("Users").child(firebaseUser.getUid());
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                    user = snapshot.getValue(User.class);
+                    String status = user.getStatus();
+                    String disabled = "disabled";
+                    if(status.matches(disabled)){
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(ProfileActivity.this,R.style.Theme_DialogBoxPWD);
+                        dialogBuilder.setTitle("Alert!");
+                        dialogBuilder.setMessage("Your account has been disabled as a driver!!");
+                        dialogBuilder.setBackground(getResources().getDrawable(R.drawable.alert_dialog_box));
+                        dialogBuilder.setNeutralButton("OKAY", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                sendUserToLogin();
+                            }
+                        });
+                        dialogBuilder.show();
+                    }
+                }
 
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                    Toast.makeText(getApplicationContext(), "Fail to get data.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void sendUserToLogin() {
+        Intent mainIntent = new Intent(ProfileActivity.this,LoginActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+    }
     private String getPathFromUri(Uri contentUri){
         String filePath;
         Cursor cursor = getContentResolver()

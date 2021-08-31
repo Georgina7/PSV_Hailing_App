@@ -2,13 +2,30 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/_4sdp">
-    <TextView
-        android:id="@+id/stop_point"
+    android:padding="@dimen/_4sdp">
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Central Court"
-        android:fontFamily="@font/open_sans_regular"
-        android:padding="@dimen/_15sdp"/>
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/stop_point"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Central Court"
+            android:fontFamily="@font/open_sans_regular"
+            android:padding="@dimen/_15sdp" />
+
+        <ImageView
+            android:id="@+id/checked_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_18sdp"
+            android:src="@drawable/ic_check_circle"
+            android:adjustViewBounds="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
 
 </androidx.cardview.widget.CardView>

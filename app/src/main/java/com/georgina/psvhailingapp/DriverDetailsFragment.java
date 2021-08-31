@@ -173,22 +173,23 @@ public class DriverDetailsFragment extends Fragment {
         }
     }
     private void updateDriverDetails(String user_id){
-        String driverStatus = "";
+        String driverAvailability = "";
         if (status.isChecked()) {
             status.setChecked(true);
-            driverStatus = "active";
+            driverAvailability = "active";
         }
         else {
             status.setChecked(false);
-            driverStatus = "Not active";
+            driverAvailability = "Not active";
         }
+        String driverStatus = "enabled";
         String licence_number = mLicenceNo.getEditText().getText().toString();
         String matatu_plate = mMatatuNoPlate.getEditText().getText().toString();
         String routes = mRoutes.getEditText().getText().toString();
         int seats_available = Integer.parseInt(mSeatsAvailable.getEditText().getText().toString());
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverStatus);
+        DriverDetails driverDetails = new DriverDetails(licence_number, matatu_plate, routes, seats_available, driverAvailability,driverStatus);
         databaseReference = firebaseDatabase.getReference("Drivers").child(user_id);
         databaseReference.setValue(driverDetails);
     }

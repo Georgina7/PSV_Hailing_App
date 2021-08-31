@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SingleTripHistoryPWDActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayoutPWDTripDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBarPWDTripDetails"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="center"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="@string/trip_details" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_7sdp"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayoutPWDTripDetails">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image_loc_point"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_70sdp"
+                android:layout_marginRight="@dimen/_7sdp"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_12sdp"
+                android:src="@drawable/ic_start_dest" />
+
+            <TextView
+                android:id="@+id/from_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Madaraka"
+                android:fontFamily="@font/open_sans_semibold"
+                android:textSize="@dimen/_14ssp"
+                android:layout_toRightOf="@id/image_loc_point"/>
+
+            <TextView
+                android:id="@+id/to_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:text="Akila"
+                android:fontFamily="@font/open_sans_semibold"
+                android:textSize="@dimen/_14ssp"
+                android:layout_toRightOf="@id/image_loc_point"
+                android:layout_below="@id/from_detail"/>
+
+            <ImageView
+                android:id="@+id/image_map_screenshot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/to_detail"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/driver_profile_image_detail"
+                android:layout_width="@dimen/_55sdp"
+                android:layout_height="@dimen/_55sdp"
+                android:layout_below="@id/image_map_screenshot"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:src="@drawable/ic_account"/>
+
+            <TextView
+                android:id="@+id/trip_status_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/image_map_screenshot"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_toRightOf="@id/driver_profile_image_detail"
+                android:fontFamily="@font/open_sans_regular"
+                android:text="You Cancelled"
+                android:textSize="@dimen/_14ssp" />
+
+            <TextView
+                android:id="@+id/trip_date_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/trip_status_detail"
+                android:layout_toRightOf="@id/driver_profile_image_detail"
+                android:fontFamily="@font/open_sans_regular"
+                android:text="12/09/21"
+                android:textSize="@dimen/_12ssp" />
+
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

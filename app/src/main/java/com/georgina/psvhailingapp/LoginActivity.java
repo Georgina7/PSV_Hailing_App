@@ -1,6 +1,7 @@
 package com.georgina.psvhailingapp;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -49,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
     private String loggedInUserId;
+    private ProgressDialog progressDialog;
 
 //    private SignInButton btnSignIn;
 //    GoogleSignInClient googleSignInClient;
@@ -87,7 +89,12 @@ public class LoginActivity extends AppCompatActivity {
         }
         else{
 
-
+            progressDialog = new ProgressDialog(LoginActivity.this);
+            progressDialog.show();
+            progressDialog.setContentView(R.layout.progress_dialog);
+            progressDialog.getWindow().setBackgroundDrawableResource(
+                    android.R.color.transparent
+            );
             PhoneAuthOptions options =
                     PhoneAuthOptions.newBuilder(mAuth)
                             .setPhoneNumber(PhoneNumber)       // Phone number to verify

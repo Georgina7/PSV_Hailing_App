@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class SeatBookingsActivity extends AppCompatActivity {
+public class PWDTripReportsActivity extends AppCompatActivity {
 
     private RecyclerView tripsRecyclerView;
     private ArrayList<Trip> tripsData;
@@ -40,14 +39,14 @@ public class SeatBookingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_seat_bookings);
-        MaterialToolbar topAppBar = findViewById(R.id.topAppBarDriverTripHistory);
-        topAppBar.setBackgroundColor(getResources().getColor(R.color.psv_color_accent));
+        setContentView(R.layout.activity_pwdtrip_reports);
+        MaterialToolbar topAppBar = findViewById(R.id.topAppBarPWDTrips);
+
         topAppBar.setNavigationOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(SeatBookingsActivity.this, DriverMapActivity.class );
+                        Intent intent = new Intent(PWDTripReportsActivity.this, PassengerMapActivity.class );
                         startActivity(intent);
                         finish();
                     }
@@ -60,33 +59,33 @@ public class SeatBookingsActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Trips");
 
-        tripsRecyclerView = findViewById(R.id.recycler_seat_bookings);
+        tripsRecyclerView = findViewById(R.id.recycler_pwd_trip_report);
         tripsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         tripsData = new ArrayList<>();
         tripIDs = new ArrayList<>();
-        sourceActivity = "Driver";
-        tripReportAdapter = new TripReportAdapter(tripsData, SeatBookingsActivity.this, tripIDs, sourceActivity);
+        sourceActivity = "PWD";
+        tripReportAdapter = new TripReportAdapter(tripsData, PWDTripReportsActivity.this, tripIDs, sourceActivity);
         tripsRecyclerView.setAdapter(tripReportAdapter);
-        //mDatabase = FirebaseDatabase.getInstance().getReference("Trips");
-        initializeData();
+        initializeStopsData();
     }
 
-    private void initializeData() {
-
+    private void initializeStopsData() {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 tripsData.clear();
                 tripIDs.clear();
                 Iterator<DataSnapshot> trips = snapshot.getChildren().iterator();
                 while (trips.hasNext()){
                     DataSnapshot trip = trips.next();
-                    if(trip.child("driverID").getValue().equals(mCurrentUser.getUid()))
-                    {
+                    if(trip.child("pwdID").getValue().equals(mCurrentUser.getUid())){
+                        //Log.d("Trip zake", trip.getValue().toString());
                         tripsData.add(trip.getValue(Trip.class));
                         tripIDs.add(trip.getKey());
+                    }else{
+                        //Log.d("Trip si zake", trip.getValue().toString());
                     }
+
                 }
                 Collections.reverse(tripsData);
                 Collections.reverse(tripIDs);
@@ -98,6 +97,5 @@ public class SeatBookingsActivity extends AppCompatActivity {
 
             }
         });
-
     }
 }

@@ -4,22 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DriverMapsFragment">
+    tools:context=".PassengerTripMapsFragment">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/google_map"
+        android:id="@+id/trip_google_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+        <include layout="@layout/passenger_current_trip_bottom_sheet"/>
+
         <fragment
-            android:id="@+id/active_trips_map_fragment"
+            android:id="@+id/trip_map_pwd"
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <include layout="@layout/driver_active_trips_bottom_sheet"/>
-
 <!--    </androidx.fragment.app.FragmentContainerView>-->
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
