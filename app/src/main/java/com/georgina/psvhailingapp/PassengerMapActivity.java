@@ -2,6 +2,8 @@ package com.georgina.psvhailingapp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +29,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PassengerMapActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawer;
@@ -38,6 +46,7 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
     private NavigationView navigationView;
     private TextView profileFullName;
     private Button viewProfileBtn;
+    private CircleImageView circleImageView;
 
 
     @Override
@@ -53,6 +62,7 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
         firebaseDatabase = FirebaseDatabase.getInstance();
         View header = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(this);
+        circleImageView = header.findViewById(R.id.profile_image);
         profileFullName = header.findViewById(R.id.profile_fullname);
         viewProfileBtn = header.findViewById(R.id.profile_btn);
 
@@ -74,6 +84,20 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
                     user = snapshot.getValue(User.class);
                     //Toast.makeText(getApplicationContext(), user.getFullName(), Toast.LENGTH_LONG).show();
                     profileFullName.setText(user.getFullName());
+                    Toast.makeText(PassengerMapActivity.this,user.getProfileImagePath(),Toast.LENGTH_SHORT).show();
+                    Glide.with(PassengerMapActivity.this).load(user.getProfileImagePath()).
+                            apply(new RequestOptions().override(600, 200)).into(circleImageView);
+//                    File imgFile = new  File("/storage/emulated/0/bluetooth/OtherIMG_2414.jpg");
+//
+//                    if(imgFile.exists()){
+//
+//                       // Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+//
+////                        circleImageView.setImageBitmap(myBitmap);
+//                        Bitmap b = BitmapFactory.decodeByteArray(imgFile.getAbsolutePath() , 0, imgFile.getAbsolutePath().length());
+//                        circleImageView.setImageBitmap(Bitmap.createScaledBitmap(b, 120, 120, false));
+//
+//                    }
                 }
 
                 @Override
@@ -105,7 +129,7 @@ public class PassengerMapActivity extends AppCompatActivity implements Navigatio
         if (mCurrentUser == null){
            sendUserToLogin();
         }
-        else{
+        else {
             checkIfUserIsDisabled();
         }
     }
