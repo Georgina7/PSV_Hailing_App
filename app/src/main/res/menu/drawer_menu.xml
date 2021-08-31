@@ -14,10 +14,6 @@
             android:id="@+id/trip_reports"
             android:icon="@drawable/ic_trip"
             android:title="@string/your_trips" />
-        <item
-            android:id="@+id/item3"
-            android:icon="@drawable/ic_email"
-            android:title="@string/item" />
     </group>
 
 </menu>

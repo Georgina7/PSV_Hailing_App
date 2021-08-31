@@ -76,13 +76,17 @@ public class SeatBookingsActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 tripsData.clear();
                 tripIDs.clear();
                 Iterator<DataSnapshot> trips = snapshot.getChildren().iterator();
                 while (trips.hasNext()){
                     DataSnapshot trip = trips.next();
-                    tripsData.add(trip.getValue(Trip.class));
-                    tripIDs.add(trip.getKey());
+                    if(trip.child("driverID").getValue().equals(mCurrentUser.getUid()))
+                    {
+                        tripsData.add(trip.getValue(Trip.class));
+                        tripIDs.add(trip.getKey());
+                    }
                 }
                 Collections.reverse(tripsData);
                 Collections.reverse(tripIDs);

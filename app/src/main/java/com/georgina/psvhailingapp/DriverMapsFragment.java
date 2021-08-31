@@ -109,12 +109,16 @@ public class DriverMapsFragment extends Fragment implements RoutingListener {
         public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
             mMap = googleMap;
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
-            }else{
-                mMap.setMyLocationEnabled(true);
+                //ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
+                return;
             }
+            mMap.setMyLocationEnabled(true);
+//            }else{
+//                mMap.setMyLocationEnabled(true);
+//            }
 
         }
+
     };
     @Nullable
     @Override
@@ -170,8 +174,11 @@ public class DriverMapsFragment extends Fragment implements RoutingListener {
                     DataSnapshot trip = trips.next();
                     if(trip.child("status").getValue().equals("pending") || trip.child("status").getValue().equals("started") && trip.child("driverID").getValue().equals(mCurrentUser.getUid())){
                         //Log.d("Trips", trip.getValue().toString());
-                        activeTripsData.add(trip.getValue(Trip.class));
-                        tripIDs.add(trip.getKey());
+                        if(trip.child("driverID").getValue().equals(mCurrentUser.getUid()))
+                        {
+                            activeTripsData.add(trip.getValue(Trip.class));
+                            tripIDs.add(trip.getKey());
+                        }
 
                     }
                 }
@@ -213,11 +220,33 @@ public class DriverMapsFragment extends Fragment implements RoutingListener {
                     mapFragment.getMapAsync(new OnMapReadyCallback() {
                         @Override
                         public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
+                            mMap = googleMap;
                             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                             MarkerOptions markerOptions = new MarkerOptions().position(latLng)
                                     .title("Your Location");
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                             googleMap.addMarker(markerOptions);
+                            if(getActivity().getIntent() != null){
+                                if(getActivity().getIntent().getStringExtra("SELECTED_TRIP_SOURCE") != null){
+                                    String source = getActivity().getIntent().getStringExtra("SELECTED_TRIP_SOURCE");
+                                    Geocoder geocoder = new Geocoder(getContext());
+                                    List<Address> addressList = null;
+                                    try {
+                                        addressList = geocoder.getFromLocationName(source, 1);
+                                        assert addressList != null;
+                                        Address sourceAddress = addressList.get(0);
+                                        trip_src = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+                                        MarkerOptions markerOptions1 = new MarkerOptions().position(trip_src)
+                                                .title("PickUp Location");
+                                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trip_src, 18));
+                                        googleMap.addMarker(markerOptions1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                            }
+
                         }
                     });
 
@@ -289,21 +318,27 @@ public class DriverMapsFragment extends Fragment implements RoutingListener {
         List<Address> addressList = null;
         try {
             addressList = geocoder.getFromLocationName(source, 1);
+            assert addressList != null;
+            Address sourceAddress = addressList.get(0);
+            trip_src = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+//            MarkerOptions markerOptions = new MarkerOptions().position(trip_src)
+//                    .title("PickUp Location");
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trip_src, 18));
+//            mMap.addMarker(markerOptions);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert addressList != null;
-        Address sourceAddress = addressList.get(0);
-        trip_src = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+
         List<Address> addressList1 = null;
         try {
             addressList1 = geocoder.getFromLocationName(destination, 1);
+            assert addressList1 != null;
+            Address destAddress = addressList1.get(0);
+            trip_des = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert addressList1 != null;
-        Address destAddress = addressList1.get(0);
-        trip_des = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
@@ -312,6 +347,7 @@ public class DriverMapsFragment extends Fragment implements RoutingListener {
                 .key(getString(R.string.maps_api_key))  //also define your api key here.
                 .build();
         routing.execute();
+
 
     }
 
@@ -329,6 +365,7 @@ public class DriverMapsFragment extends Fragment implements RoutingListener {
 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+        Log.d("PolyLine","Already Set");
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trip_src, 16));
         //mMap.addMarker(markerOptions1);
 
@@ -376,7 +413,7 @@ public class DriverMapsFragment extends Fragment implements RoutingListener {
         endMarker.title("Destination");
         mMap.addMarker(endMarker);
 
-        Log.d("PolyLine","Already Set");
+
     }
 
     @Override

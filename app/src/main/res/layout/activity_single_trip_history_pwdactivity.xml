@@ -89,17 +89,17 @@
                 android:layout_toRightOf="@id/driver_profile_image_detail"
                 android:fontFamily="@font/open_sans_regular"
                 android:text="You Cancelled"
-                android:textSize="@dimen/_11ssp" />
+                android:textSize="@dimen/_14ssp" />
 
             <TextView
                 android:id="@+id/trip_date_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="12/09/21"
-                android:fontFamily="@font/open_sans_regular"
-                android:textSize="@dimen/_9ssp"
                 android:layout_below="@id/trip_status_detail"
-                android:layout_toRightOf="@id/driver_profile_image_detail"/>
+                android:layout_toRightOf="@id/driver_profile_image_detail"
+                android:fontFamily="@font/open_sans_regular"
+                android:text="12/09/21"
+                android:textSize="@dimen/_12ssp" />
 
 
         </RelativeLayout>

@@ -146,6 +146,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
 
     private void sendUserToAccountCreation(){
         Intent mainIntent = new Intent(VerifyCodeActivity.this,MainActivity.class);
+        mainIntent.putExtra("Contact", mPhoneNumber);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);

@@ -495,21 +495,22 @@ public class PassengerMapsFragment extends Fragment implements RoutingListener {
         List<Address> addressList = null;
         try {
             addressList = geocoder.getFromLocationName(source, 1);
+            assert addressList != null;
+            Address sourceAddress = addressList.get(0);
+            trip_src = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert addressList != null;
-        Address sourceAddress = addressList.get(0);
-        trip_src = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
         List<Address> addressList1 = null;
         try {
             addressList1 = geocoder.getFromLocationName(destination, 1);
+            assert addressList1 != null;
+            Address destAddress = addressList1.get(0);
+            trip_des = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert addressList1 != null;
-        Address destAddress = addressList1.get(0);
-        trip_des = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
@@ -518,7 +519,7 @@ public class PassengerMapsFragment extends Fragment implements RoutingListener {
                 .key(getString(R.string.maps_api_key))  //also define your api key here.
                 .build();
         routing.execute();
-
+        Log.d("Driver and PWD Loc", trip_src.toString() + trip_des.toString());
     }
 
 
@@ -547,7 +548,6 @@ public class PassengerMapsFragment extends Fragment implements RoutingListener {
         PolylineOptions polyOptions = new PolylineOptions();
         LatLng polylineStartLatLng=null;
         LatLng polylineEndLatLng=null;
-
 
         polylines = new ArrayList<>();
         //add route(s) to the map using polyline

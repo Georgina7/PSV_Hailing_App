@@ -8,15 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/_8sdp">
+
         <TextView
             android:id="@+id/destination_report"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_5sdp"
+            android:fontFamily="@font/open_sans_semibold"
             android:text="Destination"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/open_sans_semibold"/>
+            android:textSize="@dimen/_14sdp" />
         <TextView
             android:id="@+id/trip_date_report"
             android:layout_width="wrap_content"

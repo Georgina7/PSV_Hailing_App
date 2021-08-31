@@ -62,8 +62,11 @@ public class SingleTripHistoryPWDActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String driver_name = snapshot.child("fullName").getValue().toString();
-                if(trip_status.equals("cancelled")){
+                if(trip_status.equals("cancelled - pwd")){
                     status.setText("You Cancelled");
+                    status.setTextColor(Color.RED);
+                }else if(trip_status.equals("cancelled - driver")){
+                    status.setText("Rider Cancelled");
                     status.setTextColor(Color.RED);
                 }else if(trip_status.equals("completed")){
                     status.setText("Your Ride with " + driver_name);

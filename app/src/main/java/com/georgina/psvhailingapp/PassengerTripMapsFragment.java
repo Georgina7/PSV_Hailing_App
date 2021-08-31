@@ -11,9 +11,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +26,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,6 +41,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -45,7 +56,9 @@ import com.google.firebase.database.ValueEventListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -54,7 +67,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class PassengerTripMapsFragment extends Fragment {
+public class PassengerTripMapsFragment extends Fragment implements RoutingListener{
 
     private BottomSheetBehavior mBottomSheetBehavior;
     private ConstraintLayout mTripBottomSheet;
@@ -62,14 +75,17 @@ public class PassengerTripMapsFragment extends Fragment {
     private TextView driverName, matatuPlate, callDriver, tripCancelledMsg;
     private CircleImageView driverProfile;
     private Button pay, cancel;
-    public String driverID;
+    public String driverID, source, destination, driver_name;
 
     FusedLocationProviderClient client;
     private FirebaseDatabase firebaseDatabase;
     SupportMapFragment mapFragment;
     private ArrayList<LatLng> locationArrayList;
 
+    private GoogleMap mMap;
     private String trip_key;
+    protected LatLng trip_src, trip_des;
+    private List<Polyline> polylines=null;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -86,20 +102,11 @@ public class PassengerTripMapsFragment extends Fragment {
 
         @Override
         public void onMapReady(GoogleMap googleMap) {
+            mMap = googleMap;
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            googleMap.setMyLocationEnabled(true);
-//            LatLng sydney = new LatLng(-34, 151);
-//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            mMap.setMyLocationEnabled(true);
         }
     };
 
@@ -162,7 +169,11 @@ public class PassengerTripMapsFragment extends Fragment {
                 }else{
                     if(snapshot.child("status").getValue().equals("started")) {
                         cancel.setVisibility(View.GONE);
+                        //source will be driver current loc once trip starts
+                        //remove marker for pwd
                     }
+                    source = snapshot.child("source").getValue().toString();
+                    destination = snapshot.child("destination").getValue().toString();
                     driverID = snapshot.child("driverID").getValue().toString();
                     DatabaseReference driverRef = firebaseDatabase.getReference("Drivers").child(driverID);
                     driverRef.addValueEventListener(new ValueEventListener() {
@@ -182,7 +193,8 @@ public class PassengerTripMapsFragment extends Fragment {
                     userRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            driverName.setText(snapshot.child("fullName").getValue().toString());
+                            driver_name = snapshot.child("fullName").getValue().toString();
+                            //driverName.setText(snapshot.child("fullName").getValue().toString());
                             callDriver.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -232,54 +244,59 @@ public class PassengerTripMapsFragment extends Fragment {
                     mapFragment.getMapAsync(new OnMapReadyCallback() {
                         @Override
                         public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
-                            LatLng pwdLoc = new LatLng(location.getLatitude(), location.getLongitude());
-                            Log.d("My Location", location.toString());
-                            MarkerOptions markerOptions = new MarkerOptions().position(pwdLoc)
-                                    .title("Your Location");
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pwdLoc, 18));
-                            googleMap.addMarker(markerOptions);
+//                            LatLng pwdLoc = new LatLng(location.getLatitude(), location.getLongitude());
+//                            Log.d("My Location", location.toString());
+//                            MarkerOptions markerOptions = new MarkerOptions().position(pwdLoc)
+//                                    .title("Your Location");
+//                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pwdLoc, 18));
+//                            googleMap.addMarker(markerOptions);
+
+                            Geocoder geocoder = new Geocoder(getContext());
+                            List<Address> addressList = null;
+                            try {
+                                addressList = geocoder.getFromLocationName(source, 1);
+                                assert addressList != null;
+                                Address sourceAddress = addressList.get(0);
+                                trip_src = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+                                MarkerOptions markerOptions = new MarkerOptions().position(trip_src)
+                                        .title("PickUp Location");
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trip_src, 18));
+                                googleMap.addMarker(markerOptions);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            List<Address> addressList1 = null;
+                            try {
+                                addressList1 = geocoder.getFromLocationName(destination, 1);
+                                assert addressList1 != null;
+                                Address destAddress = addressList1.get(0);
+                                trip_des = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             DatabaseReference locRef = firebaseDatabase.getReference("Locations").child(driverID);
                             locRef.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     LatLng driverLoc = new LatLng(snapshot.child("l").child("0").getValue(Double.class), snapshot.child("l").child("1").getValue(Double.class));
                                     Marker driverMarker =  googleMap.addMarker(new MarkerOptions().position(driverLoc).title("Driver Here"));
-//                                    String url = "https://maps.googleapis.com/maps/api/directions/json?origin="+
-//                                            pwdLoc +"&destination="+
-//                                            driverLoc +
-//                                            "&key=AIzaSyDG4LfDl2SkDlvsZcVx3TEc5fhVBQqVUQw";
-//                                    //new GetDirectionsTask().execute(url);
-//                                    OkHttpClient okHttpClient = new OkHttpClient();
-//                                    Request request = new Request.Builder().url(url).build();
-//                                    okHttpClient.newCall(request).enqueue(new Callback() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-//                                            e.printStackTrace();
-//                                        }
-//
-//                                        @Override
-//                                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-//                                            if(response.isSuccessful()){
-//                                                try{
-//                                                    final String myResponse = response.body().toString();
-//
-//                                                    getActivity().runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            Log.d("Response", myResponse);
-//
-//                                                        }
-//                                                    });
-//
-//                                                }catch (Exception e){
-//                                                   e.printStackTrace();
-//                                                }finally {
-//                                                    response.body().close();
-//                                                }
-//
-//                                            }
-//                                        }
-//                                    });
+                                    float[] distance = new float[1];
+                                    Location.distanceBetween(trip_src.latitude, trip_src.longitude,
+                                            driverLoc.latitude,
+                                            driverLoc.longitude, distance);
+                                    DecimalFormat df = new DecimalFormat("0.0");
+                                    float dist_km = distance[0]/1000;
+                                    //Log.d("Distance", Float.toString(distance[0]));
+                                    String duration = "";
+                                    if(dist_km < 0.1){
+                                        duration = " has arrived";
+                                    }else if(dist_km < 1.0){
+                                        duration = " is less than 1km away";
+                                    }else{
+                                        duration = " is " + df.format(dist_km) + "km away";
+                                    }
+                                    driverName.setText(driver_name + duration);
+
 
                                 }
 
@@ -289,12 +306,27 @@ public class PassengerTripMapsFragment extends Fragment {
                                 }
                             });
 
+                            //Log.d("Driver and PWD Loc", trip_src.toString() + trip_des.toString());
+                            startRouting();
+
                         }
                     });
 
                 }
             });
         }
+    }
+
+    private void startRouting() {
+        Routing routing = new Routing.Builder()
+                .travelMode(AbstractRouting.TravelMode.DRIVING)
+                .withListener(this)
+                .alternativeRoutes(true)
+                .waypoints(trip_src, trip_des)
+                .key(getString(R.string.maps_api_key))  //also define your api key here.
+                .build();
+        routing.execute();
+        //Log.d("Driver and PWD Loc", routing.toString());
     }
 
     @Override
@@ -307,6 +339,72 @@ public class PassengerTripMapsFragment extends Fragment {
         }
     }
 
-    public void makePayment(View view) {
+
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        e.printStackTrace();
+//        if(e != null){
+//            Log.d("Driver and PWD Loc", e.toString());
+//        }
+    }
+
+    @Override
+    public void onRoutingStart() {
+
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trip_src, 16));
+        //mMap.addMarker(markerOptions1);
+
+        CameraUpdate center = CameraUpdateFactory.newLatLng(trip_src);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+        if(polylines!=null) {
+            polylines.clear();
+        }
+        PolylineOptions polyOptions = new PolylineOptions();
+        LatLng polylineStartLatLng=null;
+        LatLng polylineEndLatLng=null;
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map using polyline
+        for (int i = 0; i <route.size(); i++) {
+
+            if(i==shortestRouteIndex)
+            {
+                polyOptions.color(getResources().getColor(R.color.psv_color_accent));
+                polyOptions.width(7);
+                polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
+                Polyline polyline = mMap.addPolyline(polyOptions);
+                polylineStartLatLng=polyline.getPoints().get(0);
+                int k=polyline.getPoints().size();
+                polylineEndLatLng=polyline.getPoints().get(k-1);
+                polylines.add(polyline);
+                //Log.d("Driver and PWD Loc", polyline.toString());
+            }
+            else {
+
+            }
+
+        }
+
+        //Add Marker on route starting position
+        MarkerOptions startMarker = new MarkerOptions();
+        startMarker.position(polylineStartLatLng);
+        startMarker.title("My Location");
+        mMap.addMarker(startMarker);
+
+        //Add Marker on route ending position
+        MarkerOptions endMarker = new MarkerOptions();
+        endMarker.position(polylineEndLatLng);
+        endMarker.title("Destination");
+        mMap.addMarker(endMarker);
+
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+        //Log.d("Driver and PWD Loc Cancel", "Canceled");
     }
 }

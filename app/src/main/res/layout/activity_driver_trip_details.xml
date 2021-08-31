@@ -50,13 +50,13 @@
                 android:id="@+id/pwd_time_date_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="12th Tue 2021, 9:00a.m"
-                android:textSize="@dimen/_12ssp"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingLeft="@dimen/_5sdp"
+                android:layout_below="@id/pwd_name_text_view"
                 android:fontFamily="@font/open_sans_regular"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:text="12th Tue 2021, 9:00a.m"
                 android:textColor="@color/black"
-                android:layout_below="@id/pwd_name_text_view"/>
+                android:textSize="@dimen/_12ssp" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

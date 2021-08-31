@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         //Initialize firebase user
         mCurrentUser = mAuth.getCurrentUser();
+        mPhoneNumber.getEditText().setText(getIntent().getStringExtra("Contact"));
 
         mCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
