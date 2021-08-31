@@ -1,34 +1,25 @@
 package com.georgina.psvhailingapp;
 
 import android.annotation.SuppressLint;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.firebase.geofire.GeoFire;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,9 +46,10 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     private NumberPicker mSeats;
     private long today;
     private CalendarConstraints.Builder constraintBuilder;
-    private String driverID, source, dest, activity;
+    private String source, dest, activity;
     private ArrayList<String> driversList;
-    private int seats_available;
+    public int seats_available;
+    public String closestDriver;
 
     @SuppressLint("NewApi")
     @Override
@@ -223,36 +215,6 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
 
         checkForRoute(source, dest);
 
-        //Toast.makeText(getApplicationContext(), source + " - " + dest , Toast.LENGTH_SHORT).show();
-
-        //String driver_id = getDriverID();
-//        if(driver_id.isEmpty()){
-//            Toast.makeText(getApplicationContext(), "No Driver", Toast.LENGTH_SHORT).show();
-//        }else
-//        {
-//            Toast.makeText(getApplicationContext(), getDriverID(), Toast.LENGTH_SHORT).show();
-//        }
-//        if(getDriverID().isEmpty()){
-//            Toast.makeText(getApplicationContext(), "No driver registered on this route", Toast.LENGTH_LONG).show();
-//        }else{
-//            String pwd_id = mCurrentUser.getUid();
-//            String driver_id = getDriverID();
-//            String status = "pending";
-//              String date = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault())
-//                      .format(new Date());
-////            int seat = mSeats.getValue();
-//            String date = mDate.getEditText().getText().toString();
-//            String time = mTime.getEditText().getText().toString();
-//            String info = mInfo.getEditText().getText().toString();
-//
-//            firebaseDatabase = FirebaseDatabase.getInstance();
-//            Trip trip = new Trip(pwd_id,driver_id,source,dest,date,time,info,status,seat);
-//            databaseReference = firebaseDatabase.getReference("Trips");
-//            String key = databaseReference.push().getKey();
-//            databaseReference.child(key).setValue(trip);
-//
-//        }
-
     }
 
     private void checkForRoute(String source, String dest) {
@@ -299,12 +261,9 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
                     if(driver.child("routes").getValue().equals(finalRoute_key)
                         && driver.child("status").getValue().equals("enabled")
                         && driver.child("availability").getValue().equals("active")){
-                        int seats = Integer.valueOf(String.valueOf(driver.child("seats").getValue()));
-                        if(seats >= mSeats.getValue()){
+                        seats_available = Integer.valueOf(String.valueOf(driver.child("seats").getValue()));
+                        if(seats_available >= mSeats.getValue()){
                             driversList.add(driver.getKey());
-                            setDriverID(driver.getKey());
-                            Log.d("Driver", getDriverID());
-
                         }
                         seatsAvailable = false;
                     }else{
@@ -313,6 +272,7 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
                 }
 
                 if(driversList.size() == 0){
+                    //Toast.makeText(getApplicationContext(), "No driver registered on this route", Toast.LENGTH_LONG).show();
                     if(!seatsAvailable){
                         Toast.makeText(getApplicationContext(), "Seats requested are unavailable", Toast.LENGTH_SHORT).show();
                     }else{
@@ -335,32 +295,61 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
     }
 
     private void findClosestDriver(ArrayList<String> driversList) {
-        databaseReference = firebaseDatabase.getReference("Locations");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference driverRef = firebaseDatabase.getReference("Drivers");
+        driverRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                LatLng userLoc = new LatLng(snapshot.child(mCurrentUser.getUid()).child("latitude").getValue(Long.class),
-                        snapshot.child(mCurrentUser.getUid()).child("longitude").getValue(Long.class));
-                Log.d("UserLoc", userLoc.toString());
-                float smallestDist = -1;
-                String closestDriver = "";
-                for(int counter = 0; counter < driversList.size(); counter++){
-                    String driverID = driversList.get(counter);
-                    snapshot.child(driverID).child("l");
-                    LatLng driverLoc = new LatLng(snapshot.child(driverID).child("l").child("0").getValue(Long.class),
-                            snapshot.child(driverID).child("l").child("1").getValue(Long.class));
-                    Log.d("DriverLoc", driverLoc.toString());
-                    float[] distance = new float[1];
-                    Location.distanceBetween(userLoc.latitude, userLoc.longitude,
-                            driverLoc.latitude,
-                            driverLoc.longitude, distance);
-                    Log.d("Distance", Float.toString(distance[0]));
-                    if(smallestDist == -1 || distance[0] < smallestDist){
-                        closestDriver = driverID;
-                        smallestDist = distance[0];
+                Iterator<DataSnapshot> drivers = snapshot.getChildren().iterator();
+                int no_of_trips = 0;
+                while (drivers.hasNext()){
+                    DataSnapshot driver = drivers.next();
+                    for(int counter = 0; counter < driversList.size(); counter++){
+                        if(driversList.get(counter).equals(driver.getKey())){
+                            no_of_trips = no_of_trips + 1;
+                        }
                     }
                 }
-                addBookingDetails(closestDriver);
+
+                Log.d("Number of Trips", "Ni: " + no_of_trips);
+
+                if(seats_available > no_of_trips){
+                    databaseReference = firebaseDatabase.getReference("Locations");
+                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            LatLng userLoc = new LatLng(snapshot.child(mCurrentUser.getUid()).child("latitude").getValue(Double.class),
+                                    snapshot.child(mCurrentUser.getUid()).child("longitude").getValue(Double.class));
+                            Log.d("UserLoc", userLoc.toString());
+                            float smallestDist = -1;
+                            for(int counter = 0; counter < driversList.size(); counter++){
+                                snapshot.child(driversList.get(counter)).child("l");
+                                LatLng driverLoc = new LatLng(snapshot.child(driversList.get(counter)).child("l").child("0").getValue(Long.class),
+                                        snapshot.child(driversList.get(counter)).child("l").child("1").getValue(Long.class));
+                                Log.d("DriverLoc", driverLoc.toString());
+                                float[] distance = new float[1];
+                                Location.distanceBetween(userLoc.latitude, userLoc.longitude,
+                                        driverLoc.latitude,
+                                        driverLoc.longitude, distance);
+                                Log.d("Distance", Float.toString(distance[0]));
+                                if(smallestDist == -1 || distance[0] < smallestDist){
+                                    closestDriver = driversList.get(counter);
+                                    smallestDist = distance[0];
+                                }
+                            }
+
+                            addBookingDetails(closestDriver);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }else{
+                    Toast.makeText(getApplicationContext(), "Seats requested are unavailable", Toast.LENGTH_SHORT).show();
+                }
+
             }
 
             @Override
@@ -368,9 +357,14 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
 
             }
         });
+
+
+        //addBookingDetails();
+        //Log.d("Closest Driver", closestDriver.get(0));
     }
 
     private void addBookingDetails(String closestDriver) {
+        //Log.d("Closest Driver", closestDriver);
         String driver_id = closestDriver;
         String info = mInfo.getEditText().getText().toString();
         String status = "pending";
@@ -382,7 +376,11 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         String key = databaseReference.push().getKey();
         databaseReference.child(key).setValue(trip);
 
-        getSeatsAvailable(driver_id);
+        Log.d("Seats Ziko", "Ni " + seats_available);
+
+//        DatabaseReference seatsAllocated = firebaseDatabase.getReference("Drivers").child(driver_id);
+//        seats_available = seats_available - seat;
+//        seatsAllocated.child("seats").setValue(seats_available);
 
         Intent intent = new Intent(SelectTimeandDateActivity.this, PassengerTripActivity.class);
         intent.putExtra("TripKey", key);
@@ -391,52 +389,36 @@ public class SelectTimeandDateActivity extends AppCompatActivity {
         //Toast.makeText(getApplicationContext(), source + " - " + dest,Toast.LENGTH_SHORT).show();
     }
 
-    private void getSeatsAvailable(String driver_id) {
-        DatabaseReference seatsAllocated = firebaseDatabase.getReference("Drivers").child(driver_id);
-        seatsAllocated.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                }
-                else {
-                    int available = Integer.valueOf(String.valueOf(task.getResult().child("seats").getValue()));
-                    setSeats_available(available);
-
-                }
-            }
-
-          });
-
-        updateSeatsAvailable(driver_id);
-
-    }
-
-    private void updateSeatsAvailable(String driver_id) {
-        int available_seats = getSeats_available() - mSeats.getValue();
-        DatabaseReference seatsAllocated = firebaseDatabase.getReference("Drivers").child(driver_id);
-        seatsAllocated.child("seats").setValue(available_seats);
-    }
+//    private void getSeatsAvailable(String driver_id) {
+//        DatabaseReference seatsAllocated = firebaseDatabase.getReference("Drivers").child(driver_id);
+//        seatsAllocated.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                if (!task.isSuccessful()) {
+//                    Log.e("firebase", "Error getting data", task.getException());
+//                }
+//                else {
+//                    available = Integer.valueOf(String.valueOf(task.getResult().child("seats").getValue()));
+//                    setSeats_available();
+//
+//                }
+//            }
+//
+//          });
+//
+//        updateSeatsAvailable(driver_id);
+//
+//    }
+//
+//    private void updateSeatsAvailable(String driver_id) {
+//        int available_seats = getSeats_available() - mSeats.getValue();
+//        DatabaseReference seatsAllocated = firebaseDatabase.getReference("Drivers").child(driver_id);
+//        seatsAllocated.child("seats").setValue(available_seats);
+//    }
 
     private void sendUserToMain(){
         Intent intent = new Intent(SelectTimeandDateActivity.this, PassengerMapActivity.class);
 
-    }
-
-    public String getDriverID() {
-        return driverID;
-    }
-
-    public void setDriverID(String driverID) {
-        this.driverID = driverID;
-    }
-
-    public int getSeats_available() {
-        return seats_available;
-    }
-
-    public void setSeats_available(int seats_available) {
-        this.seats_available = seats_available;
     }
 
     //Validation of Input Fields

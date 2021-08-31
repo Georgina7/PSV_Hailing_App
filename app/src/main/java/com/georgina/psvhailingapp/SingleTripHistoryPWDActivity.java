@@ -69,7 +69,6 @@ public class SingleTripHistoryPWDActivity extends AppCompatActivity {
                     status.setText("Your Ride with " + driver_name);
                 }
 
-
             }
 
             @Override

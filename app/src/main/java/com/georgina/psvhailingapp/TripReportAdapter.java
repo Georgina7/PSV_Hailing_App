@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,13 @@ public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.Vi
     private ArrayList<Trip> tripReports;
     private Activity myContext;
     private ArrayList<String> tripIDs;
+    private String sourceActivity;
 
-    TripReportAdapter(ArrayList<Trip> mTripsData, Activity context, ArrayList<String> tripIDs) {
+    TripReportAdapter(ArrayList<Trip> mTripsData, Activity context, ArrayList<String> tripIDs, String sourceActivity) {
         this.tripReports = mTripsData;
         this.myContext = context;
         this.tripIDs = tripIDs;
+        this.sourceActivity = sourceActivity;
     }
 
     @NonNull
@@ -63,35 +66,63 @@ public class TripReportAdapter extends RecyclerView.Adapter<TripReportAdapter.Vi
             date.setText(currentTrip.getDate_time());
             if(currentTrip.getStatus().equals("pending")){
                 status.setTextColor(Color.rgb(64,224,208));
+                status.setText(currentTrip.getStatus());
             }else if(currentTrip.getStatus().equals("completed")){
                 status.setTextColor(Color.GREEN);
-            }else if(currentTrip.getStatus().equals("cancelled")){
+                status.setText(currentTrip.getStatus());
+            }else if(currentTrip.getStatus().equals("started")){
+                status.setTextColor(Color.GREEN);
+                status.setText(currentTrip.getStatus());
+            }else {
                 status.setTextColor(Color.RED);
+                status.setText("Cancelled");
             }
-            status.setText(currentTrip.getStatus());
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(currentTrip.getStatus().equals("pending")){
-                        Intent intent = new Intent(myContext, PassengerTripActivity.class);
-                        intent.putExtra("TripKey", currentTripID);
-                        myContext.startActivity(intent);
-                    }else{
-                        Intent intent = new Intent(myContext, SingleTripHistoryPWDActivity.class);
-                        intent.putExtra("Status", currentTrip.getStatus());
-                        intent.putExtra("DriverID", currentTrip.getDriverID());
-                        intent.putExtra("Source", currentTrip.getSource());
-                        intent.putExtra("Destination", currentTrip.getDestination());
-                        intent.putExtra("Date", currentTrip.getDate_time());
-                        Toast.makeText(myContext, "Trip Clicked", Toast.LENGTH_SHORT).show();
-                        myContext.startActivity(intent);
+
+            if(sourceActivity.equals("PWD")){
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(currentTrip.getStatus().equals("pending") || currentTrip.getStatus().equals("started")){
+                            Intent intent = new Intent(myContext, PassengerTripActivity.class);
+                            intent.putExtra("TripKey", currentTripID);
+                            myContext.startActivity(intent);
+                        }else{
+                            Intent intent = new Intent(myContext, SingleTripHistoryPWDActivity.class);
+                            intent.putExtra("Status", currentTrip.getStatus());
+                            intent.putExtra("DriverID", currentTrip.getDriverID());
+                            intent.putExtra("Source", currentTrip.getSource());
+                            intent.putExtra("Destination", currentTrip.getDestination());
+                            intent.putExtra("Date", currentTrip.getDate_time());
+                            //Toast.makeText(myContext, "Trip Clicked", Toast.LENGTH_SHORT).show();
+                            myContext.startActivity(intent);
+                        }
+
                     }
-
-                }
-            });
+                });
+            }else{
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(currentTrip.getStatus().equals("pending") || currentTrip.getStatus().equals("started")){
+                            Intent intent = new Intent(myContext, DriverMapActivity.class);
+                            intent.putExtra("TripKey", currentTripID);
+                            intent.putExtra("SELECTED_TRIP_SOURCE", currentTrip.getSource());
+                            intent.putExtra("SELECTED_TRIP_DEST", currentTrip.getDestination());
+                            myContext.startActivity(intent);
+                        }else{
+                            Intent intent = new Intent(myContext, DriverTripDetailsActivity.class);
+                            intent.putExtra("Status", currentTrip.getStatus());
+                            intent.putExtra("PWDID", currentTrip.getPwdID());
+                            intent.putExtra("Source", currentTrip.getSource());
+                            intent.putExtra("Destination", currentTrip.getDestination());
+                            intent.putExtra("Date", currentTrip.getDate_time());
+                            //Toast.makeText(myContext, "Trip Clicked", Toast.LENGTH_SHORT).show();
+                            myContext.startActivity(intent);
+                        }
+                    }
+                });
+            }
         }
-
-
     }
 }

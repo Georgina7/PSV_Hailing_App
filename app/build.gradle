@@ -73,4 +73,9 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
+    //HttpClient
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
+    implementation 'com.github.jd-alexander:library:1.1.0'
+
 }

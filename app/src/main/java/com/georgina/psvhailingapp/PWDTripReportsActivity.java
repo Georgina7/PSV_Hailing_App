@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class PWDTripReportsActivity extends AppCompatActivity {
@@ -28,6 +29,7 @@ public class PWDTripReportsActivity extends AppCompatActivity {
     private ArrayList<Trip> tripsData;
     private ArrayList<String> tripIDs;
     private TripReportAdapter tripReportAdapter;
+    private String sourceActivity;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
@@ -61,7 +63,8 @@ public class PWDTripReportsActivity extends AppCompatActivity {
         tripsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         tripsData = new ArrayList<>();
         tripIDs = new ArrayList<>();
-        tripReportAdapter = new TripReportAdapter(tripsData, PWDTripReportsActivity.this, tripIDs);
+        sourceActivity = "PWD";
+        tripReportAdapter = new TripReportAdapter(tripsData, PWDTripReportsActivity.this, tripIDs, sourceActivity);
         tripsRecyclerView.setAdapter(tripReportAdapter);
         initializeStopsData();
     }
@@ -76,14 +79,16 @@ public class PWDTripReportsActivity extends AppCompatActivity {
                 while (trips.hasNext()){
                     DataSnapshot trip = trips.next();
                     if(trip.child("pwdID").getValue().equals(mCurrentUser.getUid())){
-                        Log.d("Trip zake", trip.getValue().toString());
+                        //Log.d("Trip zake", trip.getValue().toString());
                         tripsData.add(trip.getValue(Trip.class));
                         tripIDs.add(trip.getKey());
                     }else{
-                        Log.d("Trip si zake", trip.getValue().toString());
+                        //Log.d("Trip si zake", trip.getValue().toString());
                     }
 
                 }
+                Collections.reverse(tripsData);
+                Collections.reverse(tripIDs);
                 tripReportAdapter.notifyDataSetChanged();
             }
 

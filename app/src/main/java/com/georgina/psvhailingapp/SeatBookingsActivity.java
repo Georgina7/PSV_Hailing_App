@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class SeatBookingsActivity extends AppCompatActivity {
@@ -29,6 +30,7 @@ public class SeatBookingsActivity extends AppCompatActivity {
     private ArrayList<Trip> tripsData;
     private ArrayList<String> tripIDs;
     private TripReportAdapter tripReportAdapter;
+    private String sourceActivity;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
@@ -62,7 +64,8 @@ public class SeatBookingsActivity extends AppCompatActivity {
         tripsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         tripsData = new ArrayList<>();
         tripIDs = new ArrayList<>();
-        tripReportAdapter = new TripReportAdapter(tripsData, SeatBookingsActivity.this, tripIDs);
+        sourceActivity = "Driver";
+        tripReportAdapter = new TripReportAdapter(tripsData, SeatBookingsActivity.this, tripIDs, sourceActivity);
         tripsRecyclerView.setAdapter(tripReportAdapter);
         //mDatabase = FirebaseDatabase.getInstance().getReference("Trips");
         initializeData();
@@ -80,14 +83,9 @@ public class SeatBookingsActivity extends AppCompatActivity {
                     DataSnapshot trip = trips.next();
                     tripsData.add(trip.getValue(Trip.class));
                     tripIDs.add(trip.getKey());
-//                    if(trip.child("pwdID").getValue().equals(mCurrentUser.getUid())){
-//                        Log.d("Trip zake", trip.getValue().toString());
-//                        tripsData.add(trip.getValue(Trip.class));
-//                    }else{
-//                        Log.d("Trip si zake", trip.getValue().toString());
-//                    }
-
                 }
+                Collections.reverse(tripsData);
+                Collections.reverse(tripIDs);
                 tripReportAdapter.notifyDataSetChanged();
             }
 

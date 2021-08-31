@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,6 +32,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -41,12 +47,15 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -78,7 +87,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class PassengerMapsFragment extends Fragment {
+public class PassengerMapsFragment extends Fragment implements RoutingListener {
 
     private static final String TAG = " ";
     private static final int RESULT_CANCELED = 1;
@@ -110,8 +119,9 @@ public class PassengerMapsFragment extends Fragment {
     private ArrayList<String> routesList;
     private static int AUTOCOMPLETE_REQUEST_CODE_FROM;
     private static int AUTOCOMPLETE_REQUEST_CODE_WHERE;
-
-
+    //polyline object
+    private List<Polyline> polylines=null;
+    protected LatLng trip_src, trip_des;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
@@ -256,6 +266,9 @@ public class PassengerMapsFragment extends Fragment {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
                 mFrom.getEditText().setText(place.getName());
+                if(checkInputsPresent()){
+                    setPolyline();
+                }
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
@@ -270,6 +283,9 @@ public class PassengerMapsFragment extends Fragment {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
                 mWhere.getEditText().setText(place.getName());
+                if(checkInputsPresent()){
+                    setPolyline();
+                }
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
@@ -368,7 +384,7 @@ public class PassengerMapsFragment extends Fragment {
                             locationDatabaseReference.child(mCurrentUser.getUid()).setValue(location);
                             MarkerOptions markerOptions = new MarkerOptions().position(latLng)
                                     .title("Your Location");
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                             googleMap.addMarker(markerOptions);
 
                             mSearch.setOnClickListener(new View.OnClickListener() {
@@ -376,39 +392,39 @@ public class PassengerMapsFragment extends Fragment {
                                 public void onClick(View v) {
                                     String source = mFrom.getEditText().getText().toString();
                                     String destination = mWhere.getEditText().getText().toString();
-                                    Geocoder geocoder = new Geocoder(getContext());
+//                                    Geocoder geocoder = new Geocoder(getContext());
 
                                     if (!validateSource() || !validateDestination()) {
                                         return;
                                     }
                                     else {
-                                        List<Address> addressList = null;
-                                        try {
-                                            addressList = geocoder.getFromLocationName(source, 1);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        assert addressList != null;
-                                        Address sourceAddress = addressList.get(0);
-                                        LatLng sLatlng = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
-                                        MarkerOptions markerOptions1 = new MarkerOptions().position(sLatlng)
-                                                .title(source);
-                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sLatlng, 20));
-                                        mMap.addMarker(markerOptions1);
-
-                                        List<Address> addressList1 = null;
-                                        try {
-                                            addressList1 = geocoder.getFromLocationName(destination, 1);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        assert addressList1 != null;
-                                        Address destAddress = addressList1.get(0);
-                                        LatLng dLatlng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
-                                        MarkerOptions markerOptions2 = new MarkerOptions().position(dLatlng)
-                                                .title(destination);
-                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dLatlng, 20));
-                                        mMap.addMarker(markerOptions2);
+//                                        List<Address> addressList = null;
+//                                        try {
+//                                            addressList = geocoder.getFromLocationName(source, 1);
+//                                        } catch (IOException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                        assert addressList != null;
+//                                        Address sourceAddress = addressList.get(0);
+//                                        LatLng sLatlng = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+//                                        MarkerOptions markerOptions1 = new MarkerOptions().position(sLatlng)
+//                                                .title(source);
+//                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sLatlng, 20));
+//                                        mMap.addMarker(markerOptions1);
+//
+//                                        List<Address> addressList1 = null;
+//                                        try {
+//                                            addressList1 = geocoder.getFromLocationName(destination, 1);
+//                                        } catch (IOException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                        assert addressList1 != null;
+//                                        Address destAddress = addressList1.get(0);
+//                                        LatLng dLatlng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+//                                        MarkerOptions markerOptions2 = new MarkerOptions().position(dLatlng)
+//                                                .title(destination);
+//                                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dLatlng, 20));
+//                                        mMap.addMarker(markerOptions2);
 
                                         Intent bookingIntent = new Intent(getContext(),SelectTimeandDateActivity.class);
                                         bookingIntent.putExtra(EXTRA_SOURCE,source);
@@ -461,4 +477,116 @@ public class PassengerMapsFragment extends Fragment {
         }
     }
 
+    public boolean checkInputsPresent(){
+        String source = mFrom.getEditText().getText().toString().trim();
+        String dest = mWhere.getEditText().getText().toString().trim();
+        if(source.isEmpty() || dest.isEmpty()){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+
+    public void setPolyline(){
+        String source = mFrom.getEditText().getText().toString();
+        String destination = mWhere.getEditText().getText().toString();
+        Geocoder geocoder = new Geocoder(getContext());
+        List<Address> addressList = null;
+        try {
+            addressList = geocoder.getFromLocationName(source, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert addressList != null;
+        Address sourceAddress = addressList.get(0);
+        trip_src = new LatLng(sourceAddress.getLatitude(), sourceAddress.getLongitude());
+        List<Address> addressList1 = null;
+        try {
+            addressList1 = geocoder.getFromLocationName(destination, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert addressList1 != null;
+        Address destAddress = addressList1.get(0);
+        trip_des = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+        Routing routing = new Routing.Builder()
+                .travelMode(AbstractRouting.TravelMode.DRIVING)
+                .withListener(this)
+                .alternativeRoutes(true)
+                .waypoints(trip_src, trip_des)
+                .key(getString(R.string.maps_api_key))  //also define your api key here.
+                .build();
+        routing.execute();
+
+    }
+
+
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onRoutingStart() {
+        Toast.makeText(getContext(),"Finding Route...",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+//        MarkerOptions markerOptions1 = new MarkerOptions().position(trip_src)
+//                .title("Source");
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trip_src, 16));
+        //mMap.addMarker(markerOptions1);
+
+        CameraUpdate center = CameraUpdateFactory.newLatLng(trip_src);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+        if(polylines!=null) {
+            polylines.clear();
+        }
+        PolylineOptions polyOptions = new PolylineOptions();
+        LatLng polylineStartLatLng=null;
+        LatLng polylineEndLatLng=null;
+
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map using polyline
+        for (int i = 0; i <route.size(); i++) {
+
+            if(i==shortestRouteIndex)
+            {
+                polyOptions.color(getResources().getColor(R.color.psv_color_accent));
+                polyOptions.width(7);
+                polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
+                Polyline polyline = mMap.addPolyline(polyOptions);
+                polylineStartLatLng=polyline.getPoints().get(0);
+                int k=polyline.getPoints().size();
+                polylineEndLatLng=polyline.getPoints().get(k-1);
+                polylines.add(polyline);
+
+            }
+            else {
+
+            }
+
+        }
+
+        //Add Marker on route starting position
+        MarkerOptions startMarker = new MarkerOptions();
+        startMarker.position(polylineStartLatLng);
+        startMarker.title("My Location");
+        mMap.addMarker(startMarker);
+
+        //Add Marker on route ending position
+        MarkerOptions endMarker = new MarkerOptions();
+        endMarker.position(polylineEndLatLng);
+        endMarker.title("Destination");
+        mMap.addMarker(endMarker);
+
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+        setPolyline();
+    }
 }
